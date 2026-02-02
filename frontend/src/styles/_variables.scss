@@ -1,0 +1,24 @@
+:root {
+  --color-light: #FFFFFF;
+  --color-dark: #090740;
+  --color-dark-alt: #1A1A1A;
+  --color-accent: #0077FF;
+  --color-red: #FF0048;
+  --color-border: #E9E9E9;
+
+  --border-radius: 16px;
+  --border-radius-big: 50px;
+
+  --border: 1px solid var(--color-border);
+
+  --font-family: "Gotham", sans-serif;
+  --font-family-additional: "Formular", sans-serif;
+
+  --container-width: 910px;
+  --container-padding-x: 16px;
+
+  --input-height: 45px;
+  --button-height: 45px;
+
+  --transition-duration: .2s;
+}
