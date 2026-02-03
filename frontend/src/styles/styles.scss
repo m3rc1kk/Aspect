@@ -1,2 +1,9 @@
 @import 'normalize', 'mixins', 'fonts', 'variables', 'media', 'utils', 'globals';
 
+@import
+    "../components/Button/Button",
+    "../components/Input/Input",
+    "../components/Form/Form.scss",
+    "../components/Logo/Logo",
+    "../pages/Auth/SignIn/SignIn",
+    "../pages/Auth/SignUp/SignUp";
