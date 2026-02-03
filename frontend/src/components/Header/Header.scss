@@ -1,0 +1,44 @@
+.header {
+  padding-top: 40px;
+
+  @include mobile {
+    position: fixed;
+    bottom: 0;
+
+  }
+
+  &__inner {
+    position: relative;
+  }
+
+  &__nav {
+    &-list {
+      display: flex;
+      align-items: center;
+      column-gap: 18px;
+    }
+
+    &-link {
+      @include hover {
+        opacity: .6;
+      }
+
+      &--active {
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+
+  }
+
+  &__logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @include mobile {
+      display: none;
+    }
+  }
+}

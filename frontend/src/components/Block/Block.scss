@@ -1,0 +1,32 @@
+.block {
+  padding-block: 20px;
+
+  &__inner {
+    position: relative;
+    padding: 42px 89px 42px 42px;
+    border-radius: var(--border-radius-big);
+    border: var(--border);
+
+    @include mobile {
+      padding: 24px;
+      border: none;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      width: 47px;
+      height: 100%;
+      background: var(--color-accent);
+      border-top-right-radius: var(--border-radius-big);
+      border-bottom-right-radius: var(--border-radius-big);
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      @include mobile {
+        display: none;
+      }
+    }
+  }
+}

@@ -48,7 +48,7 @@ export default function Form({
             </div>
 
             {isLogin && (
-                <ButtonLink to={'/auth/password/reset'} className="form__forgot login__form-forgot">
+                <ButtonLink to="/password/reset" className="form__forgot login__form-forgot">
                     Forgot Password?
                 </ButtonLink>
             )}

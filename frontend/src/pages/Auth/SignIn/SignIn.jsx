@@ -46,7 +46,7 @@ export default function SignIn() {
                     </ButtonLink>
 
                     <div className="form__notreg login__form-notreg">
-                        <span className="form__notreg-text login__form-notreg-text">Not registered yet?</span> <ButtonLink to={'/auth/register'} className="form__notreg-link login__form-notreg-link">Create an account</ButtonLink>
+                        <span className="form__notreg-text login__form-notreg-text">Not registered yet?</span> <ButtonLink to="/sign-up" className="form__notreg-link login__form-notreg-link">Create an account</ButtonLink>
                     </div>
                 </footer>
             </div>

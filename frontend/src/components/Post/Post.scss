@@ -1,0 +1,108 @@
+.post {
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 20px;
+  }
+
+  &__item {
+    list-style: none;
+  }
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    padding: 18px;
+    border: var(--border);
+    border-radius: var(--border-radius);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &-buttons {
+      display: flex;
+      align-items: center;
+      column-gap: 12px;
+
+      @include mobile {
+        column-gap: 8px;
+      }
+    }
+
+    &-button {
+      @include hover {
+        opacity: 0.6;
+      }
+
+      @include mobile {
+        width: 32px;
+      }
+    }
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    column-gap: 12px;
+
+    &-image {
+      width: 32px;
+      height: 32px;
+    }
+
+    &-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-nickname {
+      font-size: 16px;
+
+      @include mobile {
+        font-size: 14px;
+      }
+    }
+  }
+
+  &__date {
+    font-family: var(--font-family-additional);
+    opacity: .6;
+    margin-top: -2px;
+  }
+
+  &__text {
+    padding-block: 16px 12px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+
+    @include mobile {
+      font-size: 14px;
+      padding-block: 14px 10px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    font-size: 14px;
+    font-family: var(--font-family-additional);
+
+
+
+    @include hover {
+      opacity: 0.6;
+    }
+  }
+}

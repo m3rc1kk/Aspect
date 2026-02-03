@@ -5,6 +5,7 @@ import ResetPasswordEmail from "../pages/Auth/ResetPassword/ResetPasswordEmail.j
 import ResetPasswordDone from "../pages/Auth/ResetPassword/ResetPasswordDone.jsx";
 import ResetPasswordConfirm from "../pages/Auth/ResetPassword/ResetPasswordConfirm.jsx";
 import SignUpCode from "../pages/Auth/SignUp/SignUpCode.jsx";
+import Profile from "../pages/Profile/Profile.jsx";
 
 export default function AppRouter() {
     return (
@@ -12,10 +13,12 @@ export default function AppRouter() {
             <Routes>
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
+                <Route path="/sign-up/code" element={<SignUpCode />} />
                 <Route path="/password/reset" element={<ResetPasswordEmail />} />
                 <Route path="/password/reset/done" element={<ResetPasswordDone />} />
                 <Route path="/password/reset/confirm" element={<ResetPasswordConfirm />} />
-                <Route path="/sign-up/code" element={<SignUpCode />} />
+
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </>
     );

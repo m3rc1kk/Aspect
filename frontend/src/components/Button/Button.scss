@@ -8,16 +8,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all var(--transition-duration) ease;
-  cursor: pointer;
+  transition: box-shadow var(--transition-duration) ease;
 
   @include hover {
-    box-shadow: 0 0 12px rgba(0, 119, 255, 0.6);
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 0 8px rgba(0, 119, 255, 0.4);
+    box-shadow: 0 0 10px rgba(0, 119, 255, 0.8);
   }
 }
