@@ -2,9 +2,21 @@
   padding-top: 40px;
 
   @include mobile {
-    position: fixed;
-    bottom: 0;
+    padding-top: 0;
+  }
 
+  @include mobile {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-light);
+    width: 90%;
+    z-index: 100;
+
+    border-radius: var(--border-radius-big);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 4px 10px;
   }
 
   &__inner {
@@ -18,7 +30,29 @@
       column-gap: 18px;
     }
 
+    &-item {
+      @include mobile {
+        width: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60px;
+      }
+    }
+
     &-link {
+      @include mobile {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        border-radius: var(--border-radius-big);
+        position: relative;
+        overflow: hidden;
+      }
+
+
       @include hover {
         opacity: .6;
       }
@@ -26,6 +60,19 @@
       &--active {
         cursor: default;
         pointer-events: none;
+
+        @include mobile {
+          background: rgba(0, 119, 255, 0.06);
+
+        }
+      }
+    }
+
+    &-icon {
+      @include mobile {
+        width: 20px;
+        height: 20px;
+        transition: transform var(--transition-duration), opacity var(--transition-duration);
       }
     }
 

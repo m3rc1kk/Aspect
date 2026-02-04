@@ -1,0 +1,23 @@
+.search {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  font-size: 16px;
+  width: 100%;
+  height: 60px;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding-inline: 18px;
+
+  @include mobile {
+    font-size: 14px;
+    height: 50px;
+  }
+
+  &-input {
+    border: none;
+    outline: none;
+    font-weight: 400;
+    height: 100%;
+  }
+}

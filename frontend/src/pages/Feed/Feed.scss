@@ -1,0 +1,80 @@
+.feed {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-body {
+      display: flex;
+      align-items: center;
+      column-gap: 12px;
+    }
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__hello {
+    font-size: 20px;
+
+    @include mobile {
+      font-size: 18px;
+    }
+  }
+
+  &__description {
+    margin-top: -2px;
+    font-family: var(--font-family-additional);
+    font-size: 16px;
+    opacity: .4;
+    font-weight: 400;
+
+    @include mobile {
+      font-size: 14px;
+    }
+  }
+
+  &__avatar {
+    @include mobile {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  &__button {
+    &-notif {
+      cursor: pointer;
+      background: none;
+      transition-duration: var(--transition-duration);
+
+
+      @include hover {
+        background: none;
+        border: none;
+        box-shadow: none;
+        opacity: 0.6;
+      }
+
+      &-icon {
+        @include mobile {
+          width: 52px;
+          height: 52px;
+        }
+      }
+    }
+  }
+
+  &__search {
+    margin-block: 24px;
+
+    @include mobile {
+      margin-block: 16px;
+    }
+  }
+
+  &__user-list {
+    margin-top: 16px;
+  }
+}

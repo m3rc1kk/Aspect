@@ -20,6 +20,10 @@
     transition: all var(--transition-duration) ease;
     background-color: var(--color-light);
 
+    @include mobile {
+      width: 350px;
+    }
+
     &:focus {
       border-color: var(--color-accent);
       transform: translateY(-1px);

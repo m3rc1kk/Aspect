@@ -1,0 +1,27 @@
+.notifications {
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+  }
+
+  &__header {
+    display: flex;
+    column-gap: 12px;
+    align-items: center;
+  }
+
+  &__link {
+    @include hover {
+      opacity: 0.6;
+    }
+  }
+
+  &__title {
+    @include mobile {
+      font-size: 18px;
+    }
+  }
+
+}

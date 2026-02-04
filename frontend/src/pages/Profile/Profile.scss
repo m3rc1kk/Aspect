@@ -35,18 +35,22 @@
       column-gap: 16px;
 
       @include mobile {
-        column-gap: 12px;
+        column-gap: 0;
       }
     }
 
     &-button {
+      cursor: pointer;
       @include hover {
         opacity: 0.6;
       }
 
-      @include mobile {
-        width: 40px;
-        height: 40px;
+
+      &-icon {
+        @include mobile {
+          width: 52px;
+          height: 52px;
+        }
       }
     }
   }
@@ -167,6 +171,32 @@
     display: flex;
     gap: 0;
     margin-top: 24px;
+    padding-bottom: 16px;
+
+    .profile__tab + .profile__tab {
+      margin-left: -1px;
+    }
+
+    .profile__tab--active {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  &__organizations {
+    width: 100%;
+  }
+
+  &__organizations-list {
+    width: 100%;
+  }
+
+  &__organizations-item {
+    width: 100%;
+
+    .organization__inner {
+      width: 100%;
+    }
   }
 
   &__tab {

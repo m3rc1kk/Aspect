@@ -56,7 +56,7 @@ export default function Form({
             {withButton && (
                 <ButtonLink
                     type='submit'
-                    className={`form__button button login__form-button${!isLogin ? ' form__button--margin' : ''}`}
+                    className={`form__button button__form login__form-button${!isLogin ? ' form__button--margin' : ''}`}
                 >
                     {buttonText}
                 </ButtonLink>

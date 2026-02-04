@@ -1,5 +1,4 @@
 .post-composer {
-  padding-top: 16px;
 
   &__inner {
     display: flex;
@@ -31,9 +30,7 @@
     color: var(--color-dark-alt);
     background: transparent;
 
-    &::placeholder {
-      opacity: .4;
-    }
+
 
     @include mobile {
       font-size: 14px;
@@ -56,10 +53,14 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 
     @include mobile {
-      width: 32px;
-      height: 32px;
+      width: 42px;
+      height: 42px;
     }
   }
 
@@ -71,6 +72,14 @@
     @include hover {
       box-shadow: none;
       opacity: 0.6;
+    }
+  }
+
+  &__send {
+    background-color: var(--color-accent);
+
+    @include hover {
+      box-shadow: 0 0 10px rgba(0, 119, 255, 0.8);
     }
   }
 }
