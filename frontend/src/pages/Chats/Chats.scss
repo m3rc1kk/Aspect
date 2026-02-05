@@ -210,7 +210,11 @@
     cursor: pointer;
 
     &-icon {
-      width: 60px;
+      width: 50px;
+
+      @include mobile {
+        width: 60px;
+      }
     }
 
     @include hover {

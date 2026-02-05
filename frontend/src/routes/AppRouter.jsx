@@ -10,6 +10,8 @@ import Feed from "../pages/Feed/Feed.jsx";
 import Notifications from "../pages/Notifications/Notifications.jsx";
 import SearchPage from "../pages/SearchPage/SearchPage.jsx";
 import Chats from "../pages/Chats/Chats.jsx";
+import AdminStats from "../pages/Admin/Stats/Stats.jsx";
+import AdminComplaints from "../pages/Admin/Complaints/Complaints.jsx";
 
 export default function AppRouter() {
     return (
@@ -27,6 +29,9 @@ export default function AppRouter() {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/chats" element={<Chats />} />
+
+                <Route path="/admin/stats" element={<AdminStats />} />
+                <Route path="/admin/complaints" element={<AdminComplaints />} />
             </Routes>
         </>
     );
