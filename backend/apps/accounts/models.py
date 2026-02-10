@@ -6,5 +6,8 @@ class User(AbstractUser):
     nickname = models.CharField(max_length = 50)
     avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/', blank=True, null=True) # Изменить на деплое
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
     def __str__(self):
         return f"{self.username} - {self.nickname} - {self.email}"

@@ -105,6 +105,7 @@ class PasswordResetSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'User with this email does not exist.'
             )
+        return value
 
     def save(self):
         request = self.context.get('request')
@@ -114,7 +115,7 @@ class PasswordResetSerializer(serializers.Serializer):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        reset_link = f'{FRONTEND_URL}password/reset/{uid}/{token}'
+        reset_link = f'{FRONTEND_URL}/password/reset/{uid}/{token}'
 
         send_mail(
             subject="Reset Password",
