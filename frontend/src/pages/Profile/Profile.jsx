@@ -10,9 +10,8 @@ import settingsIcon from "../../assets/images/Profile/settings.svg"
 import reportIcon from "../../assets/images/Profile/report.svg"
 import close from "../../assets/images/Close.svg";
 import profile from "../../assets/images/Settings/profile.svg"
-import dark from "../../assets/images/Settings/dark-theme.svg"
 import logout from "../../assets/images/Settings/logout.svg"
-
+import admin from "../../assets/images/Settings/admin.svg"
 
 export default function Profile() {
     const [activeTab, setActiveTab] = useState('posts');
@@ -48,7 +47,7 @@ export default function Profile() {
                     <div className="profile__data">
                         <div className="profile__info-wrapper">
                             <div className="profile__info">
-                                <img src={avatar} alt='avatar' width={80} height={80} loading='lazy' className="profile__avatar"/>
+                                <img src={avatar} alt='avatar' width={80} height={80} loading='lazy' className="profile__avatar" />
                                 <div className="profile__info-text">
                                     <h1 className="profile__nickname">Donald Trump</h1>
                                     <span className="profile__username">@donaldtrump</span>
@@ -56,7 +55,7 @@ export default function Profile() {
                             </div>
                             <div className="profile__info-buttons">
                                 <ButtonLink className="profile__info-button">
-                                    <img src={reportIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon"/>
+                                    <img src={reportIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon" />
                                 </ButtonLink>
                                 <ButtonLink
                                     className="profile__info-button"
@@ -65,7 +64,7 @@ export default function Profile() {
                                         document.getElementById('settingsOverlay')?.showModal();
                                     }}
                                 >
-                                    <img src={settingsIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon"/>
+                                    <img src={settingsIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon" />
                                 </ButtonLink>
                             </div>
                         </div>
@@ -77,7 +76,7 @@ export default function Profile() {
 
                                     <form method='dialog' className="settings-overlay__close-button-wrapper">
                                         <ButtonLink className={'settings-overlay__close-button'} type={'submit'}>
-                                            <img src={close} width={24} height={24} loading='lazy' alt="" className="settings-overlay__close-button-icon cross-button"/>
+                                            <img src={close} width={24} height={24} loading='lazy' alt="" className="settings-overlay__close-button-icon cross-button" />
                                         </ButtonLink>
                                     </form>
                                 </header>
@@ -86,7 +85,7 @@ export default function Profile() {
                                     <ul className="settings-overlay__list">
                                         <li className="settings-overlay__item">
                                             <ButtonLink to={'/'} className={'settings-overlay__button settings-overlay__profile-info'}>
-                                                <img src={profile} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon"/>
+                                                <img src={profile} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon" />
 
                                                 <div className="settings-overlay__button-body">
                                                     <h1 className="settings-overlay__button-title">Profile Info</h1>
@@ -96,19 +95,19 @@ export default function Profile() {
                                         </li>
 
                                         <li className="settings-overlay__item">
-                                            <ButtonLink to={'/'} className={'settings-overlay__button settings-overlay__dark-theme'}>
-                                                <img src={dark} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon"/>
+                                            <ButtonLink to={'/admin/stats'} className={'settings-overlay__button settings-overlay__dark-theme'}>
+                                                <img src={admin} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon" />
 
                                                 <div className="settings-overlay__button-body">
-                                                    <h1 className="settings-overlay__button-title">Dark Theme</h1>
-                                                    <span className="settings-overlay__button-description">Looking for some variety?</span>
+                                                    <h1 className="settings-overlay__button-title">Admin Panel</h1>
+                                                    <span className="settings-overlay__button-description">Welcome back, MMU</span>
                                                 </div>
                                             </ButtonLink>
                                         </li>
 
                                         <li className="settings-overlay__item">
                                             <ButtonLink to={'/'} className={'settings-overlay__button settings-overlay__logout'}>
-                                                <img src={logout} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon"/>
+                                                <img src={logout} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon" />
 
                                                 <div className="settings-overlay__button-body">
                                                     <h1 className="settings-overlay__button-title settings-overlay__logout-title">Logout</h1>
