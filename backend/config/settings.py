@@ -41,7 +41,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-
+    'rest_framework',
 ]
 
 LOCAL_APPS = [
@@ -139,3 +139,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'accounts.User'
+
+FRONTEND_URL = config('FRONTEND_URL')
