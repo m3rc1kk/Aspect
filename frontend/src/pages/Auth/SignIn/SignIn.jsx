@@ -1,14 +1,20 @@
 import Form from "../../../components/Form/Form.jsx";
 import googleIcon from "../../../assets/images/Auth/google.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ButtonLink from "../../../components/Button/Button.jsx";
+import authService from "../../../api/authService.js";
 
 export default function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const inputs = [
-        {id: "form__field-email",
+        {
+            id: "form__field-email",
             label: "Email",
             type: "email",
             placeholder: "example@gmail.com",
@@ -16,7 +22,8 @@ export default function SignIn() {
             onChange: (e) => setEmail(e.target.value),
         },
 
-        {id: "form__field-password",
+        {
+            id: "form__field-password",
             label: "Password",
             type: "password",
             placeholder: "Enter your password",
@@ -25,16 +32,52 @@ export default function SignIn() {
         }
     ];
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        try {
+            await authService.signIn({ email, password });
+            navigate('/');
+        } catch (err) {
+            console.error('Sign in error:', err);
+            if (err.email) {
+                setError(err.email[0]);
+            } else if (err.password) {
+                setError(err.password[0]);
+            } else if (err.non_field_errors) {
+                setError(err.non_field_errors[0]);
+            } else {
+                setError(err.message || 'Invalid email or password');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <form method='post' className="form login__form container" >
+        <form method='post' className="form login__form container" onSubmit={handleSubmit}>
             <div className="form__inner login__form-inner">
                 <Form
                     title='Sign In'
                     inputs={inputs}
-                    buttonText='Sign In'
+                    buttonText="Sign In"
                     isLogin={true}
                 />
+
+                {error && (
+                    <p className="form__message" style={{
+                        margin: 0,
+                        marginTop: '0.5rem',
+                        fontSize: '14px',
+                        fontWeight: 400,
+                        color: '#c0392b',
+                        textAlign: 'center',
+                    }}>
+                        {error}
+                    </p>
+                )}
 
                 <footer className="form__footer">
                     <div className="form__or login__form-or">
@@ -42,7 +85,7 @@ export default function SignIn() {
                     </div>
 
                     <ButtonLink to={'/'} className="form__google login__form-google">
-                        <img src={googleIcon} alt="Google" width={16} height={16} loading='lazy' className="form__google-icon login__form-google-icon"/> Google
+                        <img src={googleIcon} alt="Google" width={16} height={16} loading='lazy' className="form__google-icon login__form-google-icon" /> Google
                     </ButtonLink>
 
                     <div className="form__notreg login__form-notreg">

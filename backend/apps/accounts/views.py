@@ -104,6 +104,6 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         serializer.save()
 
         return Response({
-            'message': 'Password Reset Email Sent'
+            'message': 'Password has been reset successfully'
         }, status=status.HTTP_200_OK)
 

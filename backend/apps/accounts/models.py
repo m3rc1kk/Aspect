@@ -4,7 +4,7 @@ from django.db import models
 class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False)
     nickname = models.CharField(max_length = 50)
-    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/', blank=True, null=True) # Изменить на деплое
+    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

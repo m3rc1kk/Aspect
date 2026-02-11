@@ -1,4 +1,4 @@
-import {Routes, Route} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import SignIn from "../pages/Auth/SignIn/SignIn.jsx";
 import SignUp from "../pages/Auth/SignUp/SignUp.jsx";
 import ResetPasswordEmail from "../pages/Auth/ResetPassword/ResetPasswordEmail.jsx";
@@ -12,6 +12,7 @@ import SearchPage from "../pages/SearchPage/SearchPage.jsx";
 import Chats from "../pages/Chats/Chats.jsx";
 import AdminStats from "../pages/Admin/Stats/Stats.jsx";
 import AdminComplaints from "../pages/Admin/Complaints/Complaints.jsx";
+import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute.jsx";
 
 export default function AppRouter() {
     return (
@@ -22,16 +23,44 @@ export default function AppRouter() {
                 <Route path="/sign-up/code" element={<SignUpCode />} />
                 <Route path="/password/reset" element={<ResetPasswordEmail />} />
                 <Route path="/password/reset/done" element={<ResetPasswordDone />} />
-                <Route path="/password/reset/confirm" element={<ResetPasswordConfirm />} />
+                <Route path="/password/reset/:uid/:token" element={<ResetPasswordConfirm />} />
 
-                <Route path="/feed" element={<Feed />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/chats" element={<Chats />} />
+                <Route path="/feed" element={
+                    <ProtectedRoute>
+                        <Feed />
+                    </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                } />
+                <Route path="/notifications" element={
+                    <ProtectedRoute>
+                        <Notifications />
+                    </ProtectedRoute>
+                } />
+                <Route path="/search" element={
+                    <ProtectedRoute>
+                        <SearchPage />
+                    </ProtectedRoute>
+                } />
+                <Route path="/chats" element={
+                    <ProtectedRoute>
+                        <Chats />
+                    </ProtectedRoute>
+                } />
 
-                <Route path="/admin/stats" element={<AdminStats />} />
-                <Route path="/admin/complaints" element={<AdminComplaints />} />
+                <Route path="/admin/stats" element={
+                    <ProtectedRoute>
+                        <AdminStats />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/complaints" element={
+                    <ProtectedRoute>
+                        <AdminComplaints />
+                    </ProtectedRoute>
+                } />
             </Routes>
         </>
     );

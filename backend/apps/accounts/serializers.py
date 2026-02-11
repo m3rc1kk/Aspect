@@ -127,7 +127,9 @@ class PasswordResetSerializer(serializers.Serializer):
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
-    new_password = serializers.CharField(write_only=True)
+    uid = serializers.CharField(write_only=True)
+    token = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True, validators=[validate_password])
     confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
@@ -143,7 +145,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError('Invalid UID')
 
         if not default_token_generator.check_token(user, attrs['token']):
-            raise serializers.ValidationError('Invalid token')
+            raise serializers.ValidationError('Invalid or expired token')
 
         attrs['user'] = user
         return attrs
@@ -151,7 +153,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     def save(self, **kwargs):
         user = self.validated_data['user']
         user.set_password(self.validated_data['new_password'])
-
-        return super().save(**kwargs)
+        user.save()
+        return user
 
 
