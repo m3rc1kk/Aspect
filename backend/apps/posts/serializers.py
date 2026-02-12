@@ -21,9 +21,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostCreateSerializer(serializers.ModelSerializer):
     images = serializers.ListField(
-        child=serializers.ImageField,
+        child=serializers.ImageField(max_length=100000, allow_empty_file=False),
         required=False,
-        allow_empty_file=False
     )
 
     class Meta:

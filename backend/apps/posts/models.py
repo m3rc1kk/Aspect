@@ -16,7 +16,7 @@ class Post(models.Model):
 
 
 class PostImage(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='posts/%Y/%m/%d/')
     order = models.PositiveIntegerField(default=0)
 
