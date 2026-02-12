@@ -3,15 +3,16 @@ from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from .models import Post
+from .permissions import IsAuthorOrReadOnly
 from .serializers import PostSerializer, PostCreateSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().select_related('author').prefetch_related('images')
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
-    http_method_names = ['post', 'get']
+    http_method_names = ['post', 'get', 'delete']
 
     def get_serializer_class(self):
         if self.action == 'create':

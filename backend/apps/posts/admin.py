@@ -5,8 +5,8 @@ from apps.posts.models import Post, PostImage
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('content', 'author', 'created_at')
+    list_display = ('id', 'content', 'author', 'created_at')
 
 @admin.register(PostImage)
 class PostImageAdmin(admin.ModelAdmin):
-    list_display = ('image', 'post')
+    list_display = ('id', 'image', 'post')
