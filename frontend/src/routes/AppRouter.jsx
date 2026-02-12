@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import SignIn from "../pages/Auth/SignIn/SignIn.jsx";
 import SignUp from "../pages/Auth/SignUp/SignUp.jsx";
 import ResetPasswordEmail from "../pages/Auth/ResetPassword/ResetPasswordEmail.jsx";
@@ -13,6 +13,7 @@ import Chats from "../pages/Chats/Chats.jsx";
 import AdminStats from "../pages/Admin/Stats/Stats.jsx";
 import AdminComplaints from "../pages/Admin/Complaints/Complaints.jsx";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute.jsx";
+import authService from "../api/authService";
 
 export default function AppRouter() {
     return (
@@ -25,11 +26,7 @@ export default function AppRouter() {
                 <Route path="/password/reset/done" element={<ResetPasswordDone />} />
                 <Route path="/password/reset/:uid/:token" element={<ResetPasswordConfirm />} />
 
-                <Route path="/feed" element={
-                    <ProtectedRoute>
-                        <Feed />
-                    </ProtectedRoute>
-                } />
+                <Route path="/feed" element={<Feed />} />
                 <Route path="/profile" element={
                     <ProtectedRoute>
                         <Profile />

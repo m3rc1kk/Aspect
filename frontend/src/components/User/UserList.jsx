@@ -12,7 +12,7 @@ export default function UserList({
     description = 'Popular people',
 }) {
     const listRef = useRef(null);
-а
+
     const handleScrollLeft = () => {
         if (listRef.current) {
             const firstItem = listRef.current.querySelector('.user__item');
