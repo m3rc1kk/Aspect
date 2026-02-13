@@ -6,12 +6,16 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-
     def __str__(self):
         content = self.content or ''
         max_len = 50
         display = content[:max_len] + ('...' if len(content) > max_len else '')
         return f'{self.author} - {display}'
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Post'
+        verbose_name_plural = 'Posts'
 
 
 
@@ -25,3 +29,5 @@ class PostImage(models.Model):
 
     class Meta:
         ordering = ['order']
+        verbose_name = 'Image'
+        verbose_name_plural = 'Images'

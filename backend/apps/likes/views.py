@@ -53,6 +53,7 @@ class LikeViewSet(viewsets.ModelViewSet):
         like.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
     @action(detail=False, methods=['get'], url_path='post/(?P<post_pk>[^/.]+)')
     def by_post(self, request, post_pk=None):
         post = get_object_or_404(Post, id=post_pk)

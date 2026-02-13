@@ -10,5 +10,13 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = (('user', 'post'),)
-        ordering = ('-created_at',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'post'],
+                name='unique_like'
+            )
+        ]
+        ordering = ['-created_at']
+
+        verbose_name = 'Like'
+        verbose_name_plural = 'Likes'
