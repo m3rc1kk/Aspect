@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/v1/', include('apps.accounts.urls')),
     path('api/v1/', include('apps.posts.urls')),
     path('api/v1/', include('apps.likes.urls')),
+    path('api/v1/', include('apps.subscriptions.urls')),
 ]
 
 

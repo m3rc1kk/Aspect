@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.subscriptions.models import Subscription
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('follower', 'following', 'created_at')

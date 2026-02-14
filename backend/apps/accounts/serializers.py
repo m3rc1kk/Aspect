@@ -8,6 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from apps.subscriptions.models import Subscription
 from config.settings import FRONTEND_URL
 
 
@@ -17,6 +18,26 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'nickname', 'email', 'avatar', 'is_staff', 'is_active']
         read_only_fields = ['id', 'email', 'is_staff', 'is_active']
 
+
+class UserStatsSerializer(UserSerializer):
+    is_following = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ['is_following', 'followers_count', 'following_count']
+
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return Subscription.objects.filter(follower=request.user, following=obj).exists()
+        return False
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_following_count(self, obj):
+        return obj.following.count()
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
