@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import Header from "../../components/Header/Header.jsx";
 import ButtonLink from "../../components/Button/Button.jsx";
 import PostList from "../../components/Post/PostList.jsx";
@@ -13,8 +15,78 @@ import profile from "../../assets/images/Settings/profile.svg"
 import logout from "../../assets/images/Settings/logout.svg"
 import admin from "../../assets/images/Settings/admin.svg"
 
+import { usersApi } from "../../api/usersApi.js";
+import { postsApi } from "../../api/postsApi.js";
+import { subscriptionsApi } from "../../api/subscriptionsApi.js";
+
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'm';
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'k';
+    }
+    return num.toString();
+}
+
 export default function Profile() {
+    const { userId } = useParams();
+    const navigate = useNavigate();
+    const { logout: doLogout } = useAuth();
     const [activeTab, setActiveTab] = useState('posts');
+    const [user, setUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [posts, setPosts] = useState([]);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [isToggling, setIsToggling] = useState(false);
+
+    const isOwnProfile = !userId;
+
+    const fetchUser = async () => {
+        try {
+            const currentUserData = await usersApi.getCurrentUser();
+            setCurrentUser(currentUserData);
+
+            if (userId) {
+                const profileData = await usersApi.getUserById(userId);
+                setUser(profileData);
+                setIsFollowing(profileData.is_following || false);
+            } else {
+                setUser(currentUserData);
+            }
+        } catch (err) {
+            console.error('Error fetching user:', err);
+        }
+    };
+
+    const fetchUserPosts = async () => {
+        try {
+            const authorId = userId || currentUser?.id;
+            if (!authorId) return;
+            
+            const data = await postsApi.getPosts(100, 0);
+            const postsArray = Array.isArray(data) ? data : (data?.results || []);
+            
+            const userPosts = postsArray.filter(post => post.author?.id === parseInt(authorId));
+            setPosts(userPosts);
+        } catch (err) {
+            console.error('Error fetching user posts:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchUser();
+    }, [userId]);
+
+    useEffect(() => {
+        if (user) {
+            fetchUserPosts();
+        }
+    }, [user]);
+
+    if (!user) {
+        return null;
+    }
 
     const organizations = [
         {
@@ -47,25 +119,29 @@ export default function Profile() {
                     <div className="profile__data">
                         <div className="profile__info-wrapper">
                             <div className="profile__info">
-                                <img src={avatar} alt='avatar' width={80} height={80} loading='lazy' className="profile__avatar" />
+                                <img src={user.avatar || avatar} alt='avatar' width={80} height={80} loading='lazy' className="profile__avatar" />
                                 <div className="profile__info-text">
-                                    <h1 className="profile__nickname">Donald Trump</h1>
-                                    <span className="profile__username">@donaldtrump</span>
+                                    <h1 className="profile__nickname">{user.nickname || user.username}</h1>
+                                    <span className="profile__username">@{user.username}</span>
                                 </div>
                             </div>
                             <div className="profile__info-buttons">
-                                <ButtonLink className="profile__info-button">
-                                    <img src={reportIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon" />
-                                </ButtonLink>
-                                <ButtonLink
-                                    className="profile__info-button"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        document.getElementById('settingsOverlay')?.showModal();
-                                    }}
-                                >
-                                    <img src={settingsIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon" />
-                                </ButtonLink>
+                                {!isOwnProfile && (
+                                    <ButtonLink className="profile__info-button">
+                                        <img src={reportIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon" />
+                                    </ButtonLink>
+                                )}
+                                {isOwnProfile && (
+                                    <ButtonLink
+                                        className="profile__info-button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            document.getElementById('settingsOverlay')?.showModal();
+                                        }}
+                                    >
+                                        <img src={settingsIcon} width={60} height={60} loading={'lazy'} alt="" className="profile__info-button-icon" />
+                                    </ButtonLink>
+                                )}
                             </div>
                         </div>
 
@@ -106,7 +182,7 @@ export default function Profile() {
                                         </li>
 
                                         <li className="settings-overlay__item">
-                                            <ButtonLink to={'/'} className={'settings-overlay__button settings-overlay__logout'}>
+                                            <ButtonLink onClick={async () => { await doLogout(); navigate('/sign-in'); }} className={'settings-overlay__button settings-overlay__logout'}>
                                                 <img src={logout} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon" />
 
                                                 <div className="settings-overlay__button-body">
@@ -123,28 +199,59 @@ export default function Profile() {
                         <div className="profile__stats">
                             <ul className="profile__stats-list">
                                 <li className="profile__stats-item">
-                                    <span className="profile__stats-value">253.4k</span>
+                                    <span className="profile__stats-value">{formatNumber(user.followers_count || 0)}</span>
                                     <span className="profile__stats-title">Followers</span>
                                 </li>
                                 <li className="profile__stats-item">
-                                    <span className="profile__stats-value">43</span>
+                                    <span className="profile__stats-value">{formatNumber(user.following_count || 0)}</span>
                                     <span className="profile__stats-title">Following</span>
                                 </li>
                                 <li className="profile__stats-item">
-                                    <span className="profile__stats-value">546</span>
+                                    <span className="profile__stats-value">{formatNumber(user.post_count || 0)}</span>
                                     <span className="profile__stats-title">Posts</span>
                                 </li>
                             </ul>
                         </div>
 
-                        <div className="profile__buttons">
-                            <ButtonLink to="/" className="profile__button profile__subscribe">
-                                Subscribe
-                            </ButtonLink>
-                            <ButtonLink to="/" className="profile__button profile__message">
-                                Message
-                            </ButtonLink>
-                        </div>
+                        {!isOwnProfile && (
+                            <div className="profile__buttons">
+                                <button
+                                    type="button"
+                                    className={`profile__button profile__subscribe ${isFollowing ? 'profile__subscribe--active' : ''}`}
+                                    onClick={async () => {
+                                        if (isToggling) return;
+                                        setIsToggling(true);
+                                        try {
+                                            if (isFollowing) {
+                                                await subscriptionsApi.unsubscribe(user.id);
+                                                setIsFollowing(false);
+                                                setUser(prev => ({
+                                                    ...prev,
+                                                    followers_count: (prev.followers_count || 1) - 1,
+                                                }));
+                                            } else {
+                                                await subscriptionsApi.subscribe(user.id);
+                                                setIsFollowing(true);
+                                                setUser(prev => ({
+                                                    ...prev,
+                                                    followers_count: (prev.followers_count || 0) + 1,
+                                                }));
+                                            }
+                                        } catch (err) {
+                                            console.error('Error toggling subscription:', err);
+                                        } finally {
+                                            setIsToggling(false);
+                                        }
+                                    }}
+                                    disabled={isToggling}
+                                >
+                                    {isFollowing ? 'Unsubscribe' : 'Subscribe'}
+                                </button>
+                                <ButtonLink to="/" className="profile__button profile__message">
+                                    Message
+                                </ButtonLink>
+                            </div>
+                        )}
                     </div>
 
                     <div className="profile__tabs">
@@ -167,12 +274,20 @@ export default function Profile() {
                     <div className="profile__content">
                         {activeTab === 'posts' && (
                             <>
-                                <PostComposer />
-                                <PostList posts={[
-                                    { id: 1 },
-                                    { id: 2 },
-                                    { id: 3 },
-                                ]} />
+                                {isOwnProfile && <PostComposer onSubmit={async (content, images) => {
+                                    try {
+                                        const newPost = await postsApi.createPost({ content, images });
+                                        setPosts([newPost, ...posts]);
+                                    } catch (err) {
+                                        console.error('Error creating post:', err);
+                                        alert('Failed to create post');
+                                    }
+                                }} />}
+                                <PostList
+                                    posts={posts}
+                                    currentUserId={currentUser?.id}
+                                    onDelete={(postId) => setPosts(prev => prev.filter(p => p.id !== postId))}
+                                />
                             </>
                         )}
 

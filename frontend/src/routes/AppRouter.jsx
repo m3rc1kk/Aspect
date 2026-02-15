@@ -13,7 +13,6 @@ import Chats from "../pages/Chats/Chats.jsx";
 import AdminStats from "../pages/Admin/Stats/Stats.jsx";
 import AdminComplaints from "../pages/Admin/Complaints/Complaints.jsx";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute.jsx";
-import authService from "../api/authService";
 
 export default function AppRouter() {
     return (
@@ -26,8 +25,17 @@ export default function AppRouter() {
                 <Route path="/password/reset/done" element={<ResetPasswordDone />} />
                 <Route path="/password/reset/:uid/:token" element={<ResetPasswordConfirm />} />
 
-                <Route path="/feed" element={<Feed />} />
+                <Route path="/feed" element={
+                    <ProtectedRoute>
+                        <Feed />
+                    </ProtectedRoute>
+                } />
                 <Route path="/profile" element={
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                } />
+                <Route path="/profile/:userId" element={
                     <ProtectedRoute>
                         <Profile />
                     </ProtectedRoute>
@@ -58,6 +66,9 @@ export default function AppRouter() {
                         <AdminComplaints />
                     </ProtectedRoute>
                 } />
+
+                <Route path="/" element={<Navigate to="/feed" replace />} />
+                <Route path="*" element={<Navigate to="/feed" replace />} />
             </Routes>
         </>
     );

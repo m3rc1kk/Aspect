@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import authService from '../api/authService';
 
 const AuthContext = createContext(null);
@@ -40,12 +40,14 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const isAuthenticated = useMemo(() => !!user || authService.isAuthenticated(), [user]);
+
     const value = {
         user,
         login,
         register,
         logout,
-        isAuthenticated: authService.isAuthenticated(),
+        isAuthenticated,
         loading
     };
 

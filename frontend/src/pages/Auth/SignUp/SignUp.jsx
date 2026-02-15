@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ButtonLink from "../../../components/Button/Button.jsx";
 import AvatarUpload from "../../../components/AvatarUpload/AvatarUpload.jsx";
 import Input from "../../../components/Input/Input.jsx";
-import authService from "../../../api/authService.js";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
@@ -17,6 +17,7 @@ export default function SignUp() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { register } = useAuth();
 
     const handleUsernameChange = (e) => {
         let next = String(e.target.value ?? "");
@@ -90,7 +91,7 @@ export default function SignUp() {
         setLoading(true);
 
         try {
-            await authService.signUp({
+            await register({
                 email,
                 username,
                 nickname,
@@ -98,7 +99,7 @@ export default function SignUp() {
                 confirmPassword,
                 avatar
             });
-            navigate('/');
+            navigate('/feed');
         } catch (err) {
             console.error('Sign up error:', err);
             if (err.email) {
@@ -120,7 +121,7 @@ export default function SignUp() {
     };
 
     return (
-        <form method='post' className="form signup__form container" onSubmit={handleSubmit}>
+        <form className="form signup__form container" onSubmit={handleSubmit}>
             <div className="form__inner signup__form-inner">
                 <Form
                     title='Sign Up'

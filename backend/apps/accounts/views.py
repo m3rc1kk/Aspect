@@ -1,11 +1,11 @@
-from django.shortcuts import render
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import User
 from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer, UserLoginSerializer, \
-    UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer
+    UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, UserStatsSerializer
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -47,16 +47,19 @@ class UserLoginView(generics.GenericAPIView):
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserStatsSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
+        pk = self.kwargs.get('pk')
+        if pk:
+            return generics.get_object_or_404(User, pk=pk)
         return self.request.user
 
     def get_serializer_class(self):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return UserUpdateSerializer
-        return UserSerializer
+        return UserStatsSerializer
 
 
 class UserLogoutView(generics.GenericAPIView):

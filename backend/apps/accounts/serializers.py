@@ -23,9 +23,12 @@ class UserStatsSerializer(UserSerializer):
     is_following = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
+    post_count = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + ['is_following', 'followers_count', 'following_count']
+        fields = UserSerializer.Meta.fields + ['is_following', 'followers_count', 'following_count', 'comments_count', 'likes_count', 'post_count']
 
     def get_is_following(self, obj):
         request = self.context.get('request')
@@ -38,6 +41,15 @@ class UserStatsSerializer(UserSerializer):
 
     def get_following_count(self, obj):
         return obj.following.count()
+
+    def get_comments_count(self, obj):
+        return obj.comments.count()
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+    def get_post_count(self, obj):
+        return obj.posts.count()
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):

@@ -3,7 +3,7 @@ import googleIcon from "../../../assets/images/Auth/google.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonLink from "../../../components/Button/Button.jsx";
-import authService from "../../../api/authService.js";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 export default function SignIn() {
     const [email, setEmail] = useState("");
@@ -11,6 +11,7 @@ export default function SignIn() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const inputs = [
         {
@@ -38,8 +39,8 @@ export default function SignIn() {
         setLoading(true);
 
         try {
-            await authService.signIn({ email, password });
-            navigate('/');
+            await login({ email, password });
+            navigate('/feed');
         } catch (err) {
             console.error('Sign in error:', err);
             if (err.email) {
@@ -57,7 +58,7 @@ export default function SignIn() {
     };
 
     return (
-        <form method='post' className="form login__form container" onSubmit={handleSubmit}>
+        <form className="form login__form container" onSubmit={handleSubmit}>
             <div className="form__inner login__form-inner">
                 <Form
                     title='Sign In'

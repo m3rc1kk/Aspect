@@ -7,17 +7,11 @@
     border: var(--border);
     border-radius: var(--border-radius);
     background: var(--color-light);
-
-    position: relative;
-
-    @include mobile {
-      height: 130px;
-    }
   }
 
   &__textarea {
     width: 100%;
-    min-height: 80px;
+    min-height: 70px;
     padding: 0;
     margin-bottom: 12px;
     border: none;
@@ -30,11 +24,85 @@
     color: var(--color-dark-alt);
     background: transparent;
 
-
-
     @include mobile {
       font-size: 14px;
+      min-height: 56px;
     }
+  }
+
+  // Wrapper for preview + count
+  &__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 56px;
+  }
+
+  &__images-scroll {
+    max-height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 2px;
+
+    @include mobile {
+      max-height: 145px;
+    }
+  }
+
+  &__images-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 6px;
+
+    @include mobile {
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 5px;
+    }
+  }
+
+  &__image-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  &__image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__image-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    padding: 0;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  &__image-count {
+    font-family: var(--font-family-additional);
+    font-size: 13px;
+    color: var(--color-dark-alt);
+    opacity: 0.5;
   }
 
   &__actions {
@@ -42,10 +110,6 @@
     align-items: center;
     justify-content: flex-end;
     column-gap: 12px;
-
-    position: absolute;
-    bottom: 18px;
-    right: 18px;
   }
 
   &__send,
@@ -73,6 +137,11 @@
       box-shadow: none;
       opacity: 0.6;
     }
+
+    &--disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
   }
 
   &__send {
@@ -80,6 +149,11 @@
 
     @include hover {
       box-shadow: 0 0 10px rgba(0, 119, 255, 0.8);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 }
