@@ -42,6 +42,7 @@ LOCAL_APPS = [
     'apps.posts.apps.PostsConfig',
     'apps.likes.apps.LikesConfig',
     'apps.subscriptions.apps.SubscriptionsConfig',
+    'apps.comments.apps.CommentsConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
