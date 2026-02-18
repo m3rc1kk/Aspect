@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from rest_framework import serializers
 
 from apps.accounts.serializers import UserSerializer
@@ -23,6 +24,12 @@ class LikeCreateSerializer(serializers.ModelSerializer):
         model = Like
         fields = ['post']
 
+
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
+        try:
+            return super().create(validated_data)
+        except IntegrityError:
+            raise serializers.ValidationError({
+                'post': 'You have already liked this post.'
+            })

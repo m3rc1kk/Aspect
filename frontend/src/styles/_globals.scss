@@ -4,6 +4,8 @@ body {
   font-size: 14px;
   color: var(--color-dark);
   background-color: var(--color-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a,

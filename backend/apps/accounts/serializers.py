@@ -129,6 +129,26 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'nickname', 'avatar']
 
+    def validate_avatar(self, value):
+        max_size = 5 * 1024 * 1024
+        if value.size > max_size:
+            raise serializers.ValidationError(
+                'Image size should be less than 5MB'
+            )
+
+        valid_extensions = ['jpeg', 'png', 'jpg', 'webp']
+        ext = value.name.split('.')[-1].lower()
+        if ext not in valid_extensions:
+            raise serializers.ValidationError(
+                'This is not an image'
+            )
+        return value
+
+    def validate_username(self, value):
+        user = self.instance
+        if User.objects.filter(username=value).exclude(pk=user.id).exists():
+            raise serializers.ValidationError('This username is already taken.')
+        return value
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -141,7 +161,6 @@ class PasswordResetSerializer(serializers.Serializer):
         return value
 
     def save(self):
-        request = self.context.get('request')
         email = self.validated_data['email']
         user = User.objects.get(email=email)
 

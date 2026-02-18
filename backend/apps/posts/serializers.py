@@ -8,7 +8,6 @@ class PostImageSerializer(serializers.ModelSerializer):
         model = PostImage
         fields = ['id', 'image', 'order']
 
-
 class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     images = PostImageSerializer(many=True, read_only=True)
@@ -50,6 +49,29 @@ class PostCreateSerializer(serializers.ModelSerializer):
         if len(value) > 10:
             raise serializers.ValidationError(
                 'Maximum 10 images'
+            )
+        max_size = 5 * 1024 * 1024
+        if value.size > max_size:
+            raise serializers.ValidationError(
+                'Image size should be less than 5MB'
+            )
+
+        valid_extensions = ['jpeg', 'png', 'jpg', 'webp']
+        ext = value.name.split('.')[-1].lower()
+        if ext not in valid_extensions:
+            raise serializers.ValidationError(
+                'This is not an image'
+            )
+        return value
+
+    def validate_content(self, value):
+        content = (value or '').strip()
+        if not content:
+            raise serializers.ValidationError('Content cannot be empty.')
+        max_length = 1000
+        if len(content) > max_length:
+            raise serializers.ValidationError(
+                f'Content must be at most {max_length} characters'
             )
         return value
 

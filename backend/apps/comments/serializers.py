@@ -66,6 +66,17 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
         return data
 
+    def validate_content(self, value):
+        content = (value or '').strip()
+        if not content:
+            raise serializers.ValidationError('Content cannot be empty.')
+        max_length = 2000
+        if len(content) > max_length:
+            raise serializers.ValidationError(
+                f'Content must be at most {max_length} characters.'
+            )
+        return value
+
     def create(self, validated_data):
         validated_data['author'] = self.context['request'].user
         return super().create(validated_data)

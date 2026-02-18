@@ -10,6 +10,7 @@ import commentIcon from '../../assets/images/Post/comment.svg'
 import avatar from '../../assets/images/Profile/avatar.png'
 import { likesApi } from "../../api/likesApi.js";
 import { postsApi } from "../../api/postsApi.js";
+import CommentsModal from "../CommentsModal/CommentsModal.jsx";
 
 function formatNumber(num) {
     if (num >= 1000000) {
@@ -153,13 +154,15 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
     const [lightboxIndex, setLightboxIndex] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
 
     const authorAvatar = post.author?.avatar || avatar;
     const authorName = post.author?.nickname || post.author?.username || 'Unknown User';
     const authorId = post.author?.id;
     const isOwn = currentUserId && authorId === currentUserId;
     const postDate = formatDate(post.created_at);
-    const commentsCount = formatNumber(post.comments_count || 0);
+    const commentsCountFormatted = formatNumber(commentsCount);
     const authorLink = isOwn ? '/profile' : `/profile/${authorId}`;
 
     const handleLikeClick = async (e) => {
@@ -297,12 +300,23 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                             /> 
                             <span className="post__button-quantity">{formatNumber(likesCount)}</span>
                         </button>
-                        <ButtonLink to={'/'} className={'post__button'}>
-                            <img src={commentIcon} alt="Button" width={28} height={28} loading='lazy' className="post__button-icon"/> 
-                            <span className="post__button-quantity">{commentsCount}</span>
-                        </ButtonLink>
+                        <button
+                            type="button"
+                            className={`post__button ${showComments ? 'post__button--active' : ''}`}
+                            onClick={() => setShowComments((prev) => !prev)}
+                        >
+                            <img src={commentIcon} alt="Comments" width={28} height={28} loading='lazy' className="post__button-icon"/> 
+                            <span className="post__button-quantity">{commentsCountFormatted}</span>
+                        </button>
                     </div>
 
+                    {showComments && (
+                        <CommentsModal
+                            postId={post.id}
+                            onClose={() => setShowComments(false)}
+                            onCommentsCountChange={(delta) => setCommentsCount(prev => prev + delta)}
+                        />
+                    )}
                 </div>
             </div>
         </>

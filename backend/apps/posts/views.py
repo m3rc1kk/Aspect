@@ -1,10 +1,13 @@
-from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, generics
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.db.models import Q
 from .models import Post
 from .permissions import IsAuthorOrReadOnly
 from .serializers import PostSerializer, PostCreateSerializer
+from ..accounts.models import User
+from ..accounts.serializers import UserSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -32,3 +35,28 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+
+class SearchView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        q = (request.query_params.get('q') or '').strip()
+        if not q:
+            return Response({
+                'users': [],
+                'posts': [],
+            })
+
+        users = User.objects.filter(
+            Q(username__icontains=q) | Q(nickname__icontains=q))[:20]
+
+        posts = Post.objects.filter(
+            content__icontains=q
+        ).select_related('author').prefetch_related('images')[:20]
+
+        return Response({
+            'users': UserSerializer(users, many=True, context={'request': request}).data,
+            'posts': PostSerializer(posts, many=True, context={'request': request}).data,
+        })
