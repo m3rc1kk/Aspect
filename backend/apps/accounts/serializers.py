@@ -15,8 +15,8 @@ from config.settings import FRONTEND_URL
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'nickname', 'email', 'avatar', 'is_staff', 'is_active']
-        read_only_fields = ['id', 'email', 'is_staff', 'is_active']
+        fields = ['id', 'username', 'nickname', 'email', 'avatar', 'badge', 'is_staff', 'is_active']
+        read_only_fields = ['id', 'email', 'is_staff', 'is_active', 'badge']
 
 
 class UserStatsSerializer(UserSerializer):

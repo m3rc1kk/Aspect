@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from apps.accounts.serializers import UserSerializer
+from apps.organizations.models import Organization
+from apps.organizations.serializers import OrganizationSerializer
 from apps.posts.models import Post, PostImage
 
 
@@ -11,13 +13,14 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     images = PostImageSerializer(many=True, read_only=True)
+    organization = OrganizationSerializer(read_only=True, allow_null=True)
     comments_count = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'content', 'author', 'created_at', 'images', 'comments_count', 'likes_count', 'is_liked']
+        fields = ['id', 'content', 'author', 'organization', 'created_at', 'images', 'comments_count', 'likes_count', 'is_liked']
         read_only_fields = ['id', 'author', 'created_at', 'images']
 
     def get_comments_count(self, obj):
@@ -39,10 +42,16 @@ class PostCreateSerializer(serializers.ModelSerializer):
         required=False,
         write_only=True,
     )
+    organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=False,
+        allow_null=True,
+        write_only=True
+    )
 
     class Meta:
         model = Post
-        fields = ['id', 'content', 'images']
+        fields = ['id', 'content', 'images', 'organization']
         read_only_fields = ['id']
 
     def validate_images(self, value):
@@ -51,17 +60,17 @@ class PostCreateSerializer(serializers.ModelSerializer):
                 'Maximum 10 images'
             )
         max_size = 5 * 1024 * 1024
-        if value.size > max_size:
-            raise serializers.ValidationError(
-                'Image size should be less than 5MB'
-            )
-
         valid_extensions = ['jpeg', 'png', 'jpg', 'webp']
-        ext = value.name.split('.')[-1].lower()
-        if ext not in valid_extensions:
-            raise serializers.ValidationError(
-                'This is not an image'
-            )
+        for img in value:
+            if img.size > max_size:
+                raise serializers.ValidationError(
+                    'Image size should be less than 5MB'
+                )
+            ext = (img.name or '').split('.')[-1].lower()
+            if ext not in valid_extensions:
+                raise serializers.ValidationError(
+                    'This is not an image'
+                )
         return value
 
     def validate_content(self, value):

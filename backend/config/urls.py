@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/v1/', include('apps.likes.urls')),
     path('api/v1/', include('apps.subscriptions.urls')),
     path('api/v1/', include('apps.comments.urls')),
+    path('api/v1/', include('apps.organizations.urls')),
 ]
 
 

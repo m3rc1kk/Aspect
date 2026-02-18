@@ -5,6 +5,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     nickname = models.CharField(max_length = 50)
     avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/')
+    badge = models.CharField(max_length = 50, blank = True, null = True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
