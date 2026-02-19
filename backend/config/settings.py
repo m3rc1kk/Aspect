@@ -44,6 +44,7 @@ LOCAL_APPS = [
     'apps.subscriptions.apps.SubscriptionsConfig',
     'apps.comments.apps.CommentsConfig',
     'apps.organizations.apps.OrganizationsConfig',
+    'apps.reports.apps.ReportsConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

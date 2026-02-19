@@ -7,17 +7,17 @@ from apps.organizations.models import Organization
 class OrganizationSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     followers_count = serializers.SerializerMethodField()
-    is_subscribed = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = Organization
-        fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'followers_count', 'is_subscribed', 'created_at']
-        read_only_fields = ['id', 'username','nickname', 'owner', 'avatar', 'created_at']
+        fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'followers_count', 'is_following', 'created_at']
+        read_only_fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'followers_count', 'is_following', 'created_at']
 
     def get_followers_count(self, obj):
         return obj.orgFollowing.count()
 
-    def get_is_subscribed(self, obj):
+    def get_is_following(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             return obj.orgFollowing.filter(follower=request.user).exists()
