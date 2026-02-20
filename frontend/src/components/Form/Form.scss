@@ -34,10 +34,10 @@
     flex-direction: column;
     row-gap: 12px;
     padding-block: 20px 12px;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
 
     @include mobile {
-      max-width: 400px;
       width: 100%;
     }
   }

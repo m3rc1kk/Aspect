@@ -2,15 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ButtonLink from "../Button/Button.jsx";
 import reportIcon from '../../assets/images/Post/report.svg'
-import shareIcon from '../../assets/images/Post/share.svg'
 import deleteIcon from '../../assets/images/Post/delete.svg'
 import likeIcon from '../../assets/images/Post/like.svg'
 import likeActiveIcon from '../../assets/images/Post/like-active.svg'
 import commentIcon from '../../assets/images/Post/comment.svg'
-import avatar from '../../assets/images/Profile/avatar.png'
+import verifIcon from '../../assets/images/verif.svg'
+import AwardIcon from '../AwardIcon/AwardIcon.jsx';
 import { likesApi } from "../../api/likesApi.js";
 import { postsApi } from "../../api/postsApi.js";
 import CommentsModal from "../CommentsModal/CommentsModal.jsx";
+import ReportModal from "../ReportModal/ReportModal.jsx";
 
 function formatNumber(num) {
     if (num >= 1000000) {
@@ -156,14 +157,22 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
     const [isDeleting, setIsDeleting] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
+    const [showReport, setShowReport] = useState(false);
 
-    const authorAvatar = post.author?.avatar || avatar;
-    const authorName = post.author?.nickname || post.author?.username || 'Unknown User';
+    const hasOrg = !!post.organization;
+    const authorAvatar = hasOrg
+        ? post.organization?.avatar
+        : post.author?.avatar;
+    const authorName = hasOrg
+        ? (post.organization?.nickname || post.organization?.username)
+        : (post.author?.nickname || post.author?.username || 'Unknown User');
     const authorId = post.author?.id;
     const isOwn = currentUserId && authorId === currentUserId;
     const postDate = formatDate(post.created_at);
     const commentsCountFormatted = formatNumber(commentsCount);
-    const authorLink = isOwn ? '/profile' : `/profile/${authorId}`;
+    const authorLink = hasOrg
+        ? `/organization/${post.organization?.id}`
+        : (isOwn ? '/profile' : `/profile/${authorId}`);
 
     const handleLikeClick = async (e) => {
         e.preventDefault();
@@ -212,16 +221,26 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                 <div className="post__inner">
                     <header className="post__header">
                         <Link to={authorLink} className="post__author">
-                            <img src={authorAvatar} width={40} height={40} loading='lazy' alt="" className="post__author-image"/>
+                            {authorAvatar && <img src={authorAvatar} width={40} height={40} loading='lazy' alt="" className="post__author-image"/>}
                             <div className="post__author-data">
-                                <h1 className="post__author-nickname">{authorName}</h1>
+                                <h1 className="post__author-nickname">
+                                    {authorName}
+                                    {hasOrg && post.organization?.is_verified && (
+                                        <span className="verified-icon" aria-hidden="true">
+                                            <img src={verifIcon} alt="" width={20} height={20} />
+                                        </span>
+                                    )}
+                                    {!hasOrg && post.author?.badge && (
+                                        <span className="badge">{post.author.badge}</span>
+                                    )}
+                                    {!hasOrg && post.author?.awards?.length > 0 && (
+                                        <AwardIcon awards={post.author.awards} />
+                                    )}
+                                </h1>
                                 <span className="post__date">{postDate}</span>
                             </div>
                         </Link>
                         <div className="post__header-buttons">
-                            <ButtonLink to={'/'} className={'post__header-button'}>
-                                <img src={shareIcon} alt="Share" width={36} height={36} loading='lazy' className="post__header-button-icon"/>
-                            </ButtonLink>
                             {isOwn && (
                                 <button
                                     type="button"
@@ -232,9 +251,13 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                                 </button>
                             )}
                             {!isOwn && (
-                                <ButtonLink to={'/'} className={'post__header-button'}>
+                                <button
+                                    type="button"
+                                    className="post__header-button"
+                                    onClick={() => setShowReport(true)}
+                                >
                                     <img src={reportIcon} alt="Report" width={36} height={36} loading='lazy' className="post__header-button-icon"/>
-                                </ButtonLink>
+                                </button>
                             )}
                         </div>
                     </header>
@@ -256,12 +279,19 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                                         onClick={handleDelete}
                                         disabled={isDeleting}
                                     >
-                                        {isDeleting ? 'Deleting...' : 'Delete'}
+                                        Delete
                                     </button>
                                 </div>
                             </div>
                         </div>
                     )}
+
+                    <ReportModal
+                        isOpen={showReport}
+                        onClose={() => setShowReport(false)}
+                        targetType="POST"
+                        targetId={post.id}
+                    />
 
                     {post.content && (
                         <div className="post__text">
@@ -315,6 +345,7 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                             postId={post.id}
                             onClose={() => setShowComments(false)}
                             onCommentsCountChange={(delta) => setCommentsCount(prev => prev + delta)}
+                            commentsCount={commentsCount}
                         />
                     )}
                 </div>

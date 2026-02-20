@@ -21,4 +21,25 @@ export const subscriptionsApi = {
             throw error;
         }
     },
+
+    subscribeToOrganization: async (orgId) => {
+        try {
+            const response = await axiosInstance.post('/org-subscriptions/', {
+                following: orgId,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error subscribing to organization:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
+    unsubscribeFromOrganization: async (orgId) => {
+        try {
+            await axiosInstance.delete(`/org-subscriptions/${orgId}/`);
+        } catch (error) {
+            console.error('Error unsubscribing from organization:', error.response?.data || error.message);
+            throw error;
+        }
+    },
 };

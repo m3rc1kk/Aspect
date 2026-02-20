@@ -27,6 +27,8 @@
     &-text {
       display: flex;
       flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
     }
 
     &-buttons {
@@ -57,6 +59,25 @@
 
   &__nickname {
     font-size: 24px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    .badge {
+      margin-left: 0;
+    }
+
+    .award-icon-wrap--profile {
+      margin-left: 1px;
+    }
+
+    .verified-icon--org-profile {
+      margin-left: -2px;
+    }
 
     @include mobile {
       font-size: 18px;
@@ -68,6 +89,9 @@
     font-size: 18px;
     font-weight: 400;
     opacity: .6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @include mobile {
       font-size: 16px;
@@ -138,17 +162,22 @@
 
   &__button {
     height: 40px;
+    min-width: 100px;
     width: 150px;
+    max-width: 100%;
     font-size: 14px;
     border-radius: var(--border-radius);
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-inline: 16px;
 
     @include mobile {
+      min-width: 90px;
       width: 130px;
       height: 35px;
+      padding-inline: 12px;
     }
   }
 
@@ -190,6 +219,10 @@
     }
   }
 
+  &__data + &__content {
+    margin-top: 16px;
+  }
+
   &__tabs {
     display: flex;
     gap: 0;
@@ -208,6 +241,9 @@
 
   &__organizations {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
   }
 
   &__organizations-list {
@@ -219,6 +255,95 @@
 
     .organization__inner {
       width: 100%;
+    }
+  }
+
+  &__create-org-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-family);
+    color: var(--color-accent);
+    background: none;
+    border: 1px dashed var(--color-accent);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: opacity var(--transition-duration), background-color var(--transition-duration);
+
+    @include hover {
+      background-color: rgba(0, 119, 255, 0.04);
+    }
+  }
+
+  &__create-org-form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    padding: 18px;
+    border: var(--border);
+    border-radius: var(--border-radius);
+
+    .form__inputs {
+      padding-block: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  &__create-org-cancel {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    font-family: var(--font-family);
+    font-weight: 500;
+    background: none;
+    border: var(--border);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: opacity var(--transition-duration);
+
+    @include hover {
+      opacity: 0.6;
+    }
+  }
+
+  &__org-owner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &-label {
+      font-size: 14px;
+      opacity: 0.5;
+      font-family: var(--font-family-additional);
+      font-weight: 400;
+    }
+
+    &-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: opacity var(--transition-duration);
+
+      @include hover {
+        opacity: 0.7;
+      }
+    }
+
+    &-avatar {
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    &-name {
+      font-size: 14px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

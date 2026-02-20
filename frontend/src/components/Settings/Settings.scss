@@ -41,6 +41,11 @@
     width: 100%;
     text-align: left;
     padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
 
     @include hover {
       opacity: .6;
@@ -53,6 +58,7 @@
 
     &-title {
       font-size: 16px;
+      font-weight: 500;
     }
 
     &-description {
@@ -64,11 +70,38 @@
 
   &__logout {
     cursor: pointer;
-    
 
     &-title,
     &-description {
       color: var(--color-red);
     }
+  }
+
+  &__form-wrap {
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    min-width: 0;
+
+    .form__inputs {
+      padding-block: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  &__error {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
+  }
+
+  &__back {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
   }
 }

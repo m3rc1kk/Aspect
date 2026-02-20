@@ -49,7 +49,8 @@ const authService = {
 
             return response.data;
         } catch (error) {
-            throw error.response?.data || { message: 'Login failed' };
+            if (!error.response) throw error;
+            throw error.response.data || { message: 'Login failed' };
         }
     },
 
@@ -96,6 +97,10 @@ const authService = {
     getCurrentUser: () => {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user) : null;
+    },
+
+    updateUserData: (userData) => {
+        localStorage.setItem('user', JSON.stringify(userData));
     },
 
     isAuthenticated: () => {

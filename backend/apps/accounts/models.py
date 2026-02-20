@@ -2,10 +2,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class User(AbstractUser):
+    username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
-    nickname = models.CharField(max_length = 50)
+    nickname = models.CharField(max_length = 30)
     avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/')
-    badge = models.CharField(max_length = 50, blank = True, null = True)
+    badge = models.CharField(max_length = 25, blank = True, null = True)
+    awards = models.JSONField(default=list, blank=True)  # e.g. ["flay"]
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

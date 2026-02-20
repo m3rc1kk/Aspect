@@ -21,7 +21,8 @@
     background-color: var(--color-light);
 
     @include mobile {
-      width: 350px;
+      max-width: 100%;
+      font-size: 16px;
     }
 
     &:focus {

@@ -34,12 +34,16 @@
     display: flex;
     align-items: center;
     column-gap: 12px;
-
+    min-width: 0;
+    overflow: hidden;
   }
 
   &__username {
     font-size: 16px;
     margin-bottom: -4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @include mobile {
       font-size: 14px;
@@ -52,6 +56,11 @@
     font-size: 14px;
     opacity: .4;
     transition-duration: var(--transition-duration);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
   }
 
   &__body {

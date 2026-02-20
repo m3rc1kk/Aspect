@@ -2,8 +2,6 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import { Link } from "react-router-dom";
 import { commentsApi } from "../../api/commentsApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
-import defaultAvatar from '../../assets/images/Profile/avatar.png';
-
 function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -28,7 +26,7 @@ function isOwnComment(author, currentUserId) {
 }
 
 function Reply({ reply, currentUserId, onDelete }) {
-    const authorAvatar = reply.author?.avatar || defaultAvatar;
+    const authorAvatar = reply.author?.avatar;
     const authorName = reply.author?.nickname || reply.author?.username || 'Unknown';
     const authorId = reply.author?.id ?? (typeof reply.author !== 'object' ? reply.author : null);
     const isOwn = isOwnComment(reply.author, currentUserId);
@@ -37,7 +35,7 @@ function Reply({ reply, currentUserId, onDelete }) {
     return (
         <div className="post-comments__reply">
             <Link to={authorLink} className="post-comments__comment-avatar-link">
-                <img src={authorAvatar} alt="" width={28} height={28} className="post-comments__comment-avatar" />
+                {authorAvatar && <img src={authorAvatar} alt="" width={28} height={28} className="post-comments__comment-avatar" />}
             </Link>
             <div className="post-comments__comment-body">
                 <div className="post-comments__comment-header">
@@ -67,7 +65,7 @@ const CommentItem = forwardRef(function CommentItem({ comment, currentUserId, on
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [localRepliesCount, setLocalRepliesCount] = useState(comment.replies_count || 0);
 
-    const authorAvatar = comment.author?.avatar || defaultAvatar;
+    const authorAvatar = comment.author?.avatar;
     const authorName = comment.author?.nickname || comment.author?.username || 'Unknown';
     const authorId = comment.author?.id ?? (typeof comment.author !== 'object' ? comment.author : null);
     const isOwn = isOwnComment(comment.author, currentUserId);
@@ -109,7 +107,7 @@ const CommentItem = forwardRef(function CommentItem({ comment, currentUserId, on
     return (
         <div className="post-comments__comment">
             <Link to={authorLink} className="post-comments__comment-avatar-link">
-                <img src={authorAvatar} alt="" width={36} height={36} className="post-comments__comment-avatar" />
+                {authorAvatar && <img src={authorAvatar} alt="" width={36} height={36} className="post-comments__comment-avatar" />}
             </Link>
             <div className="post-comments__comment-body">
                 <div className="post-comments__comment-header">
@@ -164,7 +162,7 @@ const CommentItem = forwardRef(function CommentItem({ comment, currentUserId, on
     );
 });
 
-export default function CommentsModal({ postId, onClose, onCommentsCountChange }) {
+export default function CommentsModal({ postId, onClose, onCommentsCountChange, commentsCount = 0 }) {
     const { user } = useAuth();
     const currentUserId = user?.id;
 
@@ -262,6 +260,9 @@ export default function CommentsModal({ postId, onClose, onCommentsCountChange }
     return (
         <div className="post-comments">
             <header className="post-comments__header">
+                <span className="post-comments__title">
+                    Comments {commentsCount > 0 && <span className="post-comments__count">({commentsCount})</span>}
+                </span>
                 <button type="button" className="post-comments__close" onClick={onClose} aria-label="Collapse">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="18 15 12 9 6 15" />

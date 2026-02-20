@@ -43,7 +43,9 @@ export default function SignIn() {
             navigate('/feed');
         } catch (err) {
             console.error('Sign in error:', err);
-            if (err.email) {
+            if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+                setError('Server is unreachable. Check your connection.');
+            } else if (err.email) {
                 setError(err.email[0]);
             } else if (err.password) {
                 setError(err.password[0]);
@@ -63,7 +65,7 @@ export default function SignIn() {
                 <Form
                     title='Sign In'
                     inputs={inputs}
-                    buttonText="Sign In"
+                    buttonText={loading ? "Signing in..." : "Sign In"}
                     isLogin={true}
                 />
 

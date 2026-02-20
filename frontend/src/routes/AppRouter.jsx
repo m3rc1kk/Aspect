@@ -12,7 +12,9 @@ import SearchPage from "../pages/SearchPage/SearchPage.jsx";
 import Chats from "../pages/Chats/Chats.jsx";
 import AdminStats from "../pages/Admin/Stats/Stats.jsx";
 import AdminComplaints from "../pages/Admin/Complaints/Complaints.jsx";
+import OrganizationProfile from "../pages/OrganizationProfile/OrganizationProfile.jsx";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute.jsx";
+import AdminRoute from "../components/AdminRoute/AdminRoute.jsx";
 
 export default function AppRouter() {
     return (
@@ -40,6 +42,11 @@ export default function AppRouter() {
                         <Profile />
                     </ProtectedRoute>
                 } />
+                <Route path="/organization/:orgId" element={
+                    <ProtectedRoute>
+                        <OrganizationProfile />
+                    </ProtectedRoute>
+                } />
                 <Route path="/notifications" element={
                     <ProtectedRoute>
                         <Notifications />
@@ -57,14 +64,14 @@ export default function AppRouter() {
                 } />
 
                 <Route path="/admin/stats" element={
-                    <ProtectedRoute>
+                    <AdminRoute>
                         <AdminStats />
-                    </ProtectedRoute>
+                    </AdminRoute>
                 } />
                 <Route path="/admin/complaints" element={
-                    <ProtectedRoute>
+                    <AdminRoute>
                         <AdminComplaints />
-                    </ProtectedRoute>
+                    </AdminRoute>
                 } />
 
                 <Route path="/" element={<Navigate to="/feed" replace />} />

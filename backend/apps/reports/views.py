@@ -11,7 +11,7 @@ class ReportViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             return [permissions.IsAuthenticated()]
-        return [permissions.IsAdminUser]
+        return [permissions.IsAdminUser()]
 
     def get_serializer_class(self):
         if self.action == 'create':

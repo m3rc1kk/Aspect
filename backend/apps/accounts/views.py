@@ -8,6 +8,14 @@ from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer
 from apps.posts.permissions import IsAuthorOrReadOnly
 
 
+class UserListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.exclude(id=self.request.user.id).order_by('-date_joined')[:50]
+
+
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer

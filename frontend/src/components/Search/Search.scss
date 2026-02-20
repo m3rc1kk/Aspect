@@ -4,20 +4,24 @@
   column-gap: 12px;
   font-size: 16px;
   width: 100%;
+  min-width: 0;
   height: 60px;
   border: var(--border);
   border-radius: var(--border-radius);
   padding-inline: 18px;
 
   @include mobile {
-    font-size: 14px;
+    font-size: 16px;
     height: 50px;
   }
 
   &-input {
+    flex: 1;
+    min-width: 0;
     border: none;
     outline: none;
     font-weight: 400;
     height: 100%;
+    overflow: hidden;
   }
 }

@@ -5,9 +5,7 @@ import PostComposer from "../../components/PostComposer/PostComposer.jsx";
 import PostList from "../../components/Post/PostList.jsx";
 import UserList from "../../components/User/UserList.jsx";
 
-import avatar from '../../assets/images/Profile/avatar.png';
 import notif from '../../assets/images/Feed/notif.svg';
-import Search from "../../components/Search/Search.jsx";
 import { postsApi } from "../../api/postsApi.js";
 import { usersApi } from "../../api/usersApi.js";
 
@@ -18,6 +16,7 @@ export default function Feed() {
         try { return JSON.parse(localStorage.getItem('user')) || null; }
         catch { return null; }
     });
+    const [allUsers, setAllUsers] = useState([]);
 
     const fetchCurrentUser = async () => {
         try {
@@ -34,7 +33,6 @@ export default function Feed() {
     const fetchPosts = async () => {
         try {
             const data = await postsApi.getPosts();
-            
             const postsArray = Array.isArray(data) ? data : (data?.results || []);
             setPosts(postsArray);
         } catch (err) {
@@ -57,13 +55,24 @@ export default function Feed() {
         setPosts(prev => prev.filter(p => p.id !== postId));
     };
 
+    const fetchUsers = async () => {
+        try {
+            const data = await usersApi.getAll();
+            const usersArray = Array.isArray(data) ? data : (data?.results || []);
+            setAllUsers(usersArray);
+        } catch (err) {
+            console.error('Error fetching users:', err);
+        }
+    };
+
     useEffect(() => {
         fetchCurrentUser();
         fetchPosts();
+        fetchUsers();
     }, []);
 
     const userName = currentUser?.nickname || currentUser?.username || 'User';
-    const userAvatar = currentUser?.avatar || avatar;
+    const userAvatar = currentUser?.avatar;
 
     return (
         <>
@@ -72,7 +81,7 @@ export default function Feed() {
                 <div className="feed__inner block__inner">
                     <header className="feed__header">
                         <div className="feed__header-body">
-                            <img src={userAvatar} width={60} height={60} alt="" className="feed__avatar" />
+                            {userAvatar && <img src={userAvatar} width={60} height={60} alt="" className="feed__avatar" />}
                             <div className="feed__header-info">
                                 <h1 className="feed__hello">Hello, {userName}!</h1>
                                 <span className="feed__description">Ready for fresh news?</span>
@@ -83,25 +92,16 @@ export default function Feed() {
                         </ButtonLink>
                     </header>
 
-                    <Search className="feed__search"/>
-
                     <PostComposer onSubmit={handlePostSubmit} />
-                    
                     <PostList posts={posts} currentUserId={currentUser?.id} onDelete={handlePostDelete} />
-                    
-                    <UserList
-                        className={'feed__user-list'}
-                        users={[
-                            { id: 1, nickname: 'Auroman', username: '@auroman' },
-                            { id: 2, nickname: 'John Doe', username: '@johndoe' },
-                            { id: 3, nickname: 'Jane Smith', username: '@janesmith' },
-                            { id: 4, nickname: 'Max Power', username: '@maxpower' },
-                            { id: 5, nickname: 'Alice', username: '@alice' },
-                            { id: 6, nickname: 'Bob', username: '@bob' },
-                        ]}
-                        title="You may like..."
-                        description="Popular people"
-                    />
+                    {allUsers.length > 0 && (
+                        <UserList
+                            className={'feed__user-list'}
+                            users={allUsers}
+                            title="You may like..."
+                            description="Popular people"
+                        />
+                    )}
                 </div>
             </div>
         </>

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ButtonLink from "../Button/Button.jsx";
 import fileIcon from "../../assets/images/PostComposer/file.svg";
 import postSendIcon from "../../assets/images/PostComposer/post-send.svg";
@@ -78,6 +78,18 @@ export default function PostComposer({ placeholder = "How's life?)", onSubmit })
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef(null);
 
+    const [isMobile, setIsMobile] = useState(
+        typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+    );
+
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 767px)');
+        const handler = (e) => setIsMobile(e.matches);
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
+    }, []);
+
+    const maxVisible = isMobile ? 3 : 4;
     const canAddMore = images.length < MAX_IMAGES;
 
     const handleSubmit = async (e) => {
@@ -137,71 +149,86 @@ export default function PostComposer({ placeholder = "How's life?)", onSubmit })
     return (
         <div className="post-composer">
             <form className="post-composer__inner" onSubmit={handleSubmit}>
-                <textarea
-                    className="post-composer__textarea"
-                    placeholder={placeholder}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    rows={3}
-                    disabled={isSubmitting}
-                />
-                
+                <div className="post-composer__row">
+                    <textarea
+                        className="post-composer__textarea"
+                        placeholder={placeholder}
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        rows={3}
+                        disabled={isSubmitting}
+                    />
+                    <div className="post-composer__actions">
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/png,image/jpeg,image/gif,image/webp"
+                            multiple
+                            onChange={handleFileSelect}
+                            style={{ display: 'none' }}
+                        />
+                        <ButtonLink
+                            type="button"
+                            className={`post-composer__attach ${!canAddMore ? 'post-composer__attach--disabled' : ''}`}
+                            onClick={canAddMore ? handleAttachClick : undefined}
+                            aria-label="Attach media"
+                            disabled={isSubmitting || !canAddMore}
+                        >
+                            <img src={fileIcon} alt="" width={24} height={24} loading="lazy" />
+                        </ButtonLink>
+                        <ButtonLink
+                            type="submit"
+                            className="post-composer__send"
+                            aria-label="Send post"
+                            disabled={isSubmitting || (!text.trim() && images.length === 0)}
+                        >
+                            <img src={postSendIcon} alt="" width={24} height={24} loading="lazy" />
+                        </ButtonLink>
+                    </div>
+                </div>
+
                 {images.length > 0 && (
                     <div className="post-composer__preview">
                         <div className="post-composer__images-scroll">
                             <div className="post-composer__images-preview">
-                                {images.map((image, index) => (
-                                    <div key={index} className="post-composer__image-item">
-                                        <img 
-                                            src={previews[index]}
-                                            alt={`Preview ${index + 1}`}
-                                            className="post-composer__image-preview"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => removeImage(index)}
-                                            className="post-composer__image-remove"
-                                            aria-label="Remove image"
-                                        >
-                                            ×
-                                        </button>
-                                    </div>
-                                ))}
+                                {previews.slice(0, maxVisible).map((src, index) => {
+                                    const isLast = index === maxVisible - 1 && images.length > maxVisible;
+                                    return (
+                                        <div key={index} className="post-composer__image-item">
+                                            <img
+                                                src={src}
+                                                alt={`Preview ${index + 1}`}
+                                                className="post-composer__image-preview"
+                                            />
+                                            {isLast ? (
+                                                <div
+                                                    className="post-composer__image-more"
+                                                    onClick={() => removeImage(index)}
+                                                >
+                                                    +{images.length - (maxVisible - 1)}
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="post-composer__image-remove"
+                                                    aria-label="Remove image"
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-                        <span className="post-composer__image-count">
-                            {images.length}/{MAX_IMAGES}
-                        </span>
+                        {!isMobile && (
+                            <span className="post-composer__image-count">
+                                {images.length}/{MAX_IMAGES}
+                            </span>
+                        )}
                     </div>
                 )}
-
-                <div className="post-composer__actions">
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/png,image/jpeg,image/gif,image/webp"
-                        multiple
-                        onChange={handleFileSelect}
-                        style={{ display: 'none' }}
-                    />
-                    <ButtonLink
-                        type="button"
-                        className={`post-composer__attach ${!canAddMore ? 'post-composer__attach--disabled' : ''}`}
-                        onClick={canAddMore ? handleAttachClick : undefined}
-                        aria-label="Attach media"
-                        disabled={isSubmitting || !canAddMore}
-                    >
-                        <img src={fileIcon} alt="" width={24} height={24} loading="lazy" />
-                    </ButtonLink>
-                    <ButtonLink
-                        type="submit"
-                        className="post-composer__send"
-                        aria-label="Send post"
-                        disabled={isSubmitting || (!text.trim() && images.length === 0)}
-                    >
-                        <img src={postSendIcon} alt="" width={24} height={24} loading="lazy" />
-                    </ButtonLink>
-                </div>
             </form>
         </div>
     );

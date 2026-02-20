@@ -13,11 +13,16 @@
     &-info {
       display: flex;
       flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
     }
   }
 
   &__hello {
     font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @include mobile {
       font-size: 18px;
@@ -30,6 +35,9 @@
     font-size: 16px;
     opacity: .4;
     font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @include mobile {
       font-size: 14px;
@@ -75,6 +83,10 @@
     @include mobile {
       margin-block: 16px;
     }
+  }
+
+  .post-composer {
+    margin-top: 16px;
   }
 
   &__user-list {

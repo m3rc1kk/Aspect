@@ -40,6 +40,12 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const updateUser = (updatedData) => {
+        const next = user ? { ...user, ...updatedData } : updatedData;
+        authService.updateUserData(next);
+        setUser(next);
+    };
+
     const isAuthenticated = useMemo(() => !!user || authService.isAuthenticated(), [user]);
 
     const value = {
@@ -47,6 +53,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        updateUser,
         isAuthenticated,
         loading
     };

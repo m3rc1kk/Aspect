@@ -43,6 +43,10 @@
 
   &__title {
     font-size: 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 
     @include mobile {
       font-size: 14px;
@@ -55,6 +59,11 @@
     opacity: .4;
     margin-top: -4px;
     transition-duration: var(--transition-duration);
+  }
+
+  &__avatar {
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   &__arrow {

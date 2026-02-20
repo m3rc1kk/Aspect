@@ -1,10 +1,10 @@
 import axiosInstance from './axiosConfig';
 
 export const postsApi = {
-    getPosts: async (limit = 20, offset = 0) => {
+    getPosts: async (limit = 20, offset = 0, params = {}) => {
         try {
             const response = await axiosInstance.get('/posts/', {
-                params: { limit, offset }
+                params: { limit, offset, ...params }
             });
             return response.data;
         } catch (error) {
@@ -27,11 +27,15 @@ export const postsApi = {
         try {
             const formData = new FormData();
             formData.append('content', postData.content);
-            
+
             if (postData.images && postData.images.length > 0) {
                 postData.images.forEach((image) => {
                     formData.append('images', image);
                 });
+            }
+
+            if (postData.organizationId) {
+                formData.append('organization', postData.organizationId);
             }
 
             const response = await axiosInstance.post('/posts/', formData, {

@@ -27,3 +27,91 @@ h1 {
   letter-spacing: -3%;
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 11px;
+  font-family: var(--font-family-additional);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin-left: 6px;
+  line-height: 1.6;
+  flex-shrink: 0;
+
+  @include mobile {
+    font-size: 9px;
+    padding: 1px 6px;
+  }
+}
+
+.verified-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: -3px;
+  flex-shrink: 0;
+  vertical-align: middle;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &--org-profile {
+    width: 23px;
+    height: 23px;
+  }
+
+  @include mobile {
+    width: 18px;
+    height: 18px;
+    margin-left: -2px;
+
+    &--org-profile {
+      width: 21px;
+      height: 21px;
+    }
+  }
+}
+
+.award-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 1px;
+  flex-shrink: 0;
+  vertical-align: middle;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .award-icon-wrap--profile & {
+    width: 17px;
+    height: 17px;
+
+    @include mobile {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  @include mobile {
+    width: 12px;
+    height: 12px;
+  }
+}
+

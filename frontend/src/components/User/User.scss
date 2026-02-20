@@ -32,6 +32,12 @@
   &__nickname {
     font-size: 16px;
     margin-bottom: -4px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
 
     @include mobile {
       font-size: 14px;
@@ -42,14 +48,20 @@
     font-family: var(--font-family-additional);
     font-weight: 400;
     opacity: .6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__body {
     position: absolute;
     bottom: 12px;
     left: 12px;
+    right: 12px;
     color: var(--color-light);
     z-index: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
 

@@ -11,8 +11,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Organization
-        fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'followers_count', 'is_following', 'created_at']
-        read_only_fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'followers_count', 'is_following', 'created_at']
+        fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'is_verified','followers_count', 'is_following', 'created_at']
+        read_only_fields = ['id', 'username', 'nickname', 'owner', 'avatar', 'is_verified', 'followers_count', 'is_following', 'created_at']
 
     def get_followers_count(self, obj):
         return obj.orgFollowing.count()
@@ -27,7 +27,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class OrganizationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = ['username', 'nickname', 'avatar']
+        fields = ['id', 'username', 'nickname', 'avatar']
 
     def validate_username(self, value):
         qs = Organization.objects.filter(username=value)
