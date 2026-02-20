@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from apps.accounts.models import User
 from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer, UserLoginSerializer, \
     UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, UserStatsSerializer
+from apps.posts.permissions import IsAuthorOrReadOnly
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -47,7 +48,7 @@ class UserLoginView(generics.GenericAPIView):
 class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserStatsSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthorOrReadOnly]
 
     def get_object(self):
         pk = self.kwargs.get('pk')

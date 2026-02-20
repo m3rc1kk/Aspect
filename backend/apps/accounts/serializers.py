@@ -153,29 +153,23 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    def validate_email(self, value):
-        if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(
-                'User with this email does not exist.'
-            )
-        return value
-
     def save(self):
         email = self.validated_data['email']
         user = User.objects.get(email=email)
 
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        if user:
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        reset_link = f'{FRONTEND_URL}/password/reset/{uid}/{token}'
+            reset_link = f'{FRONTEND_URL}/password/reset/{uid}/{token}'
 
-        send_mail(
-            subject="Reset Password",
-            message=f'Follow the link to reset your password: {reset_link}',
-            from_email=None,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+            send_mail(
+                subject="Reset Password",
+                message=f'Follow the link to reset your password: {reset_link}',
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=False,
+            )
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):

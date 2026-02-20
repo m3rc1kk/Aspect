@@ -1,9 +1,5 @@
 from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
-
 from apps.reports.models import Report
-from apps.reports.permissions import IsStaffOrReadOnlyReport
 from apps.reports.serializers import ReportSerializer, ReportCreateSerializer, ReportStatusSerializer
 
 
@@ -15,7 +11,7 @@ class ReportViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             return [permissions.IsAuthenticated()]
-        return [IsStaffOrReadOnlyReport()]
+        return [permissions.IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'create':
