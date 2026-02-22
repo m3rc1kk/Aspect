@@ -11,7 +11,7 @@ import AvatarUpload from "../../components/AvatarUpload/AvatarUpload.jsx";
 
 import settingsIcon from "../../assets/images/Profile/settings.svg"
 import reportIcon from "../../assets/images/Profile/report.svg"
-import close from "../../assets/images/Close.svg";
+import close from "../../assets/images/close.svg";
 import profile from "../../assets/images/Settings/profile.svg"
 import logout from "../../assets/images/Settings/logout.svg"
 import admin from "../../assets/images/Settings/admin.svg"

@@ -8,7 +8,7 @@ import Input from "../../components/Input/Input.jsx";
 import AvatarUpload from "../../components/AvatarUpload/AvatarUpload.jsx";
 
 import settingsIcon from "../../assets/images/Profile/settings.svg";
-import close from "../../assets/images/Close.svg";
+import close from "../../assets/images/close.svg";
 import profile from "../../assets/images/Settings/profile.svg";
 import deleteIcon from "../../assets/images/Settings/delete.svg";
 import verifIcon from "../../assets/images/verif.svg";
