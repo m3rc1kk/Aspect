@@ -1,7 +1,11 @@
+from django.contrib.auth.validators import UnicodeUsernameValidator
+
 from rest_framework import serializers
 
 from apps.accounts.serializers import UserSerializer
 from apps.organizations.models import Organization
+
+_username_validator = UnicodeUsernameValidator()
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -30,6 +34,9 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'nickname', 'avatar']
 
     def validate_username(self, value):
+        if len(value) > 30:
+            raise serializers.ValidationError('Username must be 30 characters or fewer.')
+        _username_validator(value)
         qs = Organization.objects.filter(username=value)
         if self.instance is not None:
             qs = qs.exclude(pk=self.instance.pk)

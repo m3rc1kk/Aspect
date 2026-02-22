@@ -34,8 +34,8 @@
     flex-direction: column;
     row-gap: 12px;
     padding-block: 20px 12px;
-    width: 100%;
-    max-width: 400px;
+    width: 400px;
+    max-width: 100%;
 
     @include mobile {
       width: 100%;

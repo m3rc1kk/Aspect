@@ -232,10 +232,11 @@ export default function Profile() {
                                                 placeholder="@ user"
                                                 className="form__field"
                                                 value={`@ ${editUsername}`}
+                                                maxLength={32}
                                                 onChange={(e) => {
                                                     let next = String(e.target.value ?? '');
                                                     next = next.replace(/^@ ?/, '').replace(/@/g, '');
-                                                    setEditUsername(next.trimStart());
+                                                    setEditUsername(next.trimStart().slice(0, 30));
                                                 }}
                                             />
                                             <Input
@@ -245,7 +246,8 @@ export default function Profile() {
                                                 placeholder="Ivan Ivanov"
                                                 className="form__field"
                                                 value={editNickname}
-                                                onChange={(e) => setEditNickname(e.target.value)}
+                                                maxLength={30}
+                                                onChange={(e) => setEditNickname(e.target.value.slice(0, 30))}
                                             />
                                             {editError && (
                                                 <p className="settings-overlay__error" style={{ color: '#c0392b', fontSize: 14, margin: 0, textAlign: 'center' }}>
@@ -425,10 +427,11 @@ export default function Profile() {
                                             placeholder="@ organization"
                                             className="form__field"
                                             value={`@ ${orgUsername}`}
+                                            maxLength={32}
                                             onChange={(e) => {
                                                 let next = String(e.target.value ?? '');
                                                 next = next.replace(/^@ ?/, '').replace(/@/g, '');
-                                                setOrgUsername(next.trimStart());
+                                                setOrgUsername(next.trimStart().slice(0, 30));
                                             }}
                                         />
                                         <Input
@@ -438,7 +441,8 @@ export default function Profile() {
                                             placeholder="Organization Name"
                                             className="form__field"
                                             value={orgNickname}
-                                            onChange={(e) => setOrgNickname(e.target.value)}
+                                            maxLength={30}
+                                            onChange={(e) => setOrgNickname(e.target.value.slice(0, 30))}
                                         />
                                         {orgError && (
                                             <p className="settings-overlay__error" style={{ color: '#c0392b', fontSize: 14, margin: 0, textAlign: 'center' }}>

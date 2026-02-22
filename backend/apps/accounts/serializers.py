@@ -72,6 +72,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Passwords must match.')
         return attrs
 
+    def validate_username(self, value):
+        if len(value) > 30:
+            raise serializers.ValidationError('Username must be 30 characters or fewer.')
+        return value
+
+    def validate_nickname(self, value):
+        if len(value) > 30:
+            raise serializers.ValidationError('Nickname must be 30 characters or fewer.')
+        return value
+
     def validate_avatar(self, value):
         max_size = 5 * 1024 * 1024
         if value.size > max_size:
@@ -145,9 +155,16 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_username(self, value):
+        if len(value) > 30:
+            raise serializers.ValidationError('Username must be 30 characters or fewer.')
         user = self.instance
         if User.objects.filter(username=value).exclude(pk=user.id).exists():
             raise serializers.ValidationError('This username is already taken.')
+        return value
+
+    def validate_nickname(self, value):
+        if len(value) > 30:
+            raise serializers.ValidationError('Nickname must be 30 characters or fewer.')
         return value
 
 class PasswordResetSerializer(serializers.Serializer):

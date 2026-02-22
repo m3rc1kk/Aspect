@@ -29,7 +29,7 @@ export default function Form({
                 {children
                     ? children
                     : inputs.length > 0
-                        ? inputs.map(({ id, label, type, placeholder, value, onChange }) => (
+                        ? inputs.map(({ id, label, type, placeholder, value, onChange, maxLength, ...rest }) => (
                             <Input
                                 key={id}
                                 id={id}
@@ -39,6 +39,8 @@ export default function Form({
                                 className="form__field auth__form-field"
                                 value={value}
                                 onChange={onChange}
+                                maxLength={maxLength}
+                                {...rest}
                             />
                         ))
                         : (

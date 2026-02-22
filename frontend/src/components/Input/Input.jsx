@@ -1,4 +1,4 @@
-export default function Input({className, id, placeholder, label, type = 'text', value, onChange}) {
+export default function Input({className, id, placeholder, label, type = 'text', value, onChange, maxLength}) {
     const isFile = type === 'file';
 
     return (
@@ -15,6 +15,7 @@ export default function Input({className, id, placeholder, label, type = 'text',
                    autoComplete="off"
                    value={type === "file" ? undefined : value}
                    onChange={onChange}
+                   maxLength={maxLength}
                    hidden={isFile}
             />
         </div>

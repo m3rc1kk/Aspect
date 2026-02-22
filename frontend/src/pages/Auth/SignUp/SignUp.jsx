@@ -23,7 +23,7 @@ export default function SignUp() {
         let next = String(e.target.value ?? "");
         next = next.replace(/^@ ?/, "");
         next = next.replace(/@/g, "");
-        setUsername(next.trimStart());
+        setUsername(next.trimStart().slice(0, 30));
     };
 
     const inputs = [
@@ -42,6 +42,7 @@ export default function SignUp() {
             type: "text",
             placeholder: "@ user",
             value: `@ ${username}`,
+            maxLength: 32,
             onChange: handleUsernameChange,
         },
 
@@ -51,7 +52,8 @@ export default function SignUp() {
             type: "text",
             placeholder: "Ivan Ivanov",
             value: nickname,
-            onChange: (e) => setNickname(e.target.value),
+            maxLength: 30,
+            onChange: (e) => setNickname(e.target.value.slice(0, 30)),
         },
 
         {
