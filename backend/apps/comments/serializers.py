@@ -55,14 +55,10 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         post = data.get('post')
 
         if parent and parent.post != post:
-            raise serializers.ValidationError({
-                'parent': 'Parent comment must belong to the same post'
-            })
+            raise serializers.ValidationError('Parent comment must belong to the same post')
 
         if parent and parent.parent:
-            raise serializers.ValidationError({
-                'parent': 'Cannot reply to a reply.'
-            })
+            raise serializers.ValidationError('Cannot reply to a reply.')
 
         return data
 

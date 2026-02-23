@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
-from django.core.mail import send_mail
+from apps.accounts.redis_utils import generate_code, set_signup_code, get_signup_code, delete_signup_code
+from apps.accounts.tasks import send_password_reset_email, send_verification_code_email
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from apps.accounts.models import User
@@ -70,6 +71,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['confirm_password']:
             raise serializers.ValidationError('Passwords must match.')
+        if User.objects.filter(email=attrs['email'], is_active=True).exists():
+            raise serializers.ValidationError({'email': ['This email is already registered.']})
         return attrs
 
     def validate_username(self, value):
@@ -99,8 +102,41 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('confirm_password')
-        user = User.objects.create_user(**validated_data)
+        email = validated_data['email']
+
+        User.objects.filter(email=email, is_active=False).delete()
+        user = User.objects.create_user(
+            **validated_data,
+            is_active=False
+        )
+        code = generate_code()
+        set_signup_code(email, code)
+        send_verification_code_email.delay(email, code)
         return user
+
+class UserRegistrationVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6, min_length=6)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        code = attrs.get('code').strip()
+        user = User.objects.filter(email=email, is_active=False).first()
+        if not user:
+            raise serializers.ValidationError('No pending registration for this email. Please sign up first.')
+        stored_code = get_signup_code(email)
+        if not stored_code or stored_code != code:
+            raise serializers.ValidationError('Invalid or expired code.')
+        attrs['user'] = user
+        return attrs
+
+    def save(self):
+        user = self.validated_data['user']
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+        delete_signup_code(user.email)
+        return user
+
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -124,7 +160,7 @@ class UserLoginSerializer(serializers.Serializer):
                 )
             if not user.is_active:
                 raise serializers.ValidationError(
-                    'Your account is disabled.'
+                    'Your account is disabled'
                 )
 
             attrs['user'] = user
@@ -180,12 +216,10 @@ class PasswordResetSerializer(serializers.Serializer):
 
             reset_link = f'{FRONTEND_URL}/password/reset/{uid}/{token}'
 
-            send_mail(
-                subject="Reset Password",
+            send_password_reset_email.delay(
+                email=email,
+                subject='Aspect - Reset Password',
                 message=f'Follow the link to reset your password: {reset_link}',
-                from_email=None,
-                recipient_list=[email],
-                fail_silently=False,
             )
 
 

@@ -30,6 +30,4 @@ class LikeCreateSerializer(serializers.ModelSerializer):
         try:
             return super().create(validated_data)
         except IntegrityError:
-            raise serializers.ValidationError({
-                'post': 'You have already liked this post.'
-            })
+            raise serializers.ValidationError('You have already liked this post.')

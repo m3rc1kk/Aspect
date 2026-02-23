@@ -25,6 +25,16 @@ const authService = {
                 },
             });
 
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Registration failed' };
+        }
+    },
+
+    signUpVerify: async (email, code) => {
+        try {
+            const response = await axiosInstance.post('/sign-up/verify/', { email, code });
+
             if (response.data.access && response.data.refresh) {
                 localStorage.setItem('access_token', response.data.access);
                 localStorage.setItem('refresh_token', response.data.refresh);
@@ -33,7 +43,8 @@ const authService = {
 
             return response.data;
         } catch (error) {
-            throw error.response?.data || { message: 'Registration failed' };
+            if (!error.response) throw error;
+            throw error.response.data || { message: 'Verification failed' };
         }
     },
 

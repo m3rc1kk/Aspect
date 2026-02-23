@@ -93,7 +93,7 @@ export default function SignUp() {
         setLoading(true);
 
         try {
-            await register({
+            const response = await register({
                 email,
                 username,
                 nickname,
@@ -101,7 +101,7 @@ export default function SignUp() {
                 confirmPassword,
                 avatar
             });
-            navigate('/feed');
+            navigate('/sign-up/code', { state: { email: response.email } });
         } catch (err) {
             console.error('Sign up error:', err);
             if (err.email) {
@@ -112,6 +112,8 @@ export default function SignUp() {
                 setError(err.password[0]);
             } else if (err.avatar) {
                 setError(err.avatar[0]);
+            } else if (err.nickname) {
+                setError(err.nickname[0]);
             } else if (err.non_field_errors) {
                 setError(err.non_field_errors[0]);
             } else {

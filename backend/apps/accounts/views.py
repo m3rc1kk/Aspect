@@ -4,7 +4,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import User
 from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer, UserLoginSerializer, \
-    UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, UserStatsSerializer
+    UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, UserStatsSerializer, \
+    UserRegistrationVerifySerializer
 from apps.posts.permissions import IsAuthorOrReadOnly
 
 
@@ -25,15 +26,26 @@ class UserRegistrationView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        return Response({
+            'message': 'Confirmation code sent to your email.',
+            'email': user.email,
+        }, status=status.HTTP_201_CREATED)
 
+class UserRegistrationVerifyView(generics.CreateAPIView):
+    serializer_class = UserRegistrationVerifySerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
         refresh = RefreshToken.for_user(user)
         return Response({
             'user': UserSerializer(user, context=self.get_serializer_context()).data,
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'message': 'User Registered!'
-        }, status=status.HTTP_201_CREATED)
-
+            'message': 'Email verified. You are registered.',
+        }, status=status.HTTP_200_OK)
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer

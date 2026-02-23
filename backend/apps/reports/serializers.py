@@ -46,7 +46,7 @@ class ReportCreateSerializer(serializers.ModelSerializer):
 
         request = self.context['request']
         if target_type == Report.TargetType.USER and target_user == request.user:
-            raise serializers.ValidationError({'target_user': 'You cannot report yourself.'})
+            raise serializers.ValidationError('You cannot report yourself.')
 
         return attrs
 

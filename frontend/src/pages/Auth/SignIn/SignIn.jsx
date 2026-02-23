@@ -65,7 +65,7 @@ export default function SignIn() {
                 <Form
                     title='Sign In'
                     inputs={inputs}
-                    buttonText={loading ? "Signing in..." : "Sign In"}
+                    buttonText="Sign In"
                     isLogin={true}
                 />
 
