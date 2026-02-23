@@ -10,6 +10,22 @@
     display: flex;
     column-gap: 12px;
     align-items: center;
+    flex-wrap: wrap;
+  }
+
+  &__read-all {
+    margin-left: auto;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--color-accent);
+    background: none;
+    border: var(--border);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+
+    @include hover {
+      opacity: 0.8;
+    }
   }
 
   &__link {

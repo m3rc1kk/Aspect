@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/v1/', include('apps.comments.urls')),
     path('api/v1/', include('apps.organizations.urls')),
     path('api/v1/', include('apps.reports.urls')),
+    path('api/v1/', include('apps.notifications.urls')),
 ]
 
 

@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL
-    || (typeof window !== 'undefined' ? `http://${window.location.hostname}:8000/api/v1` : 'http://localhost:8000/api/v1');
+const API_BASE = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, '')
+    : (typeof window !== 'undefined' ? `http://${window.location.hostname}:8000` : 'http://localhost:8000');
+const API_URL = (import.meta.env.VITE_API_URL
+    || (typeof window !== 'undefined' ? `http://${window.location.hostname}:8000/api/v1` : 'http://localhost:8000/api/v1'));
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -59,5 +62,12 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+/** Base URL of the backend (no /api/v1). Use for media URLs (avatars, etc.). */
+export const getMediaUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `${API_BASE}${path.startsWith('/') ? path : '/' + path}`;
+};
 
 export default axiosInstance;

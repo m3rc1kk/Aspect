@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header.jsx";
 import ButtonLink from "../../components/Button/Button.jsx";
 import PostComposer from "../../components/PostComposer/PostComposer.jsx";
@@ -8,15 +9,18 @@ import UserList from "../../components/User/UserList.jsx";
 import notif from '../../assets/images/Feed/notif.svg';
 import { postsApi } from "../../api/postsApi.js";
 import { usersApi } from "../../api/usersApi.js";
+import { notificationsApi } from "../../api/notificationsApi.js";
 
 
 export default function Feed() {
+    const { pathname } = useLocation();
     const [posts, setPosts] = useState([]);
     const [currentUser, setCurrentUser] = useState(() => {
         try { return JSON.parse(localStorage.getItem('user')) || null; }
         catch { return null; }
     });
     const [allUsers, setAllUsers] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const fetchCurrentUser = async () => {
         try {
@@ -65,11 +69,30 @@ export default function Feed() {
         }
     };
 
+    const fetchUnreadCount = async () => {
+        try {
+            const count = await notificationsApi.getUnreadCount();
+            setUnreadCount(count);
+        } catch {
+            setUnreadCount(0);
+        }
+    };
+
     useEffect(() => {
         fetchCurrentUser();
         fetchPosts();
         fetchUsers();
+        fetchUnreadCount();
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(fetchUnreadCount, 60000);
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        if (pathname === '/feed') fetchUnreadCount();
+    }, [pathname]);
 
     const userName = currentUser?.nickname || currentUser?.username || 'User';
     const userAvatar = currentUser?.avatar;
@@ -87,8 +110,11 @@ export default function Feed() {
                                 <span className="feed__description">Ready for fresh news?</span>
                             </div>
                         </div>
-                        <ButtonLink className="feed__button-notif" to={'/notifications'}>
-                            <img src={notif} width={60} height={60} loading="lazy" alt="" className="feed__button-notif-icon" />
+                        <ButtonLink className="feed__button-notif" to="/notifications">
+                            <span className="feed__button-notif-wrap">
+                                <img src={notif} width={60} height={60} loading="lazy" alt="" className="feed__button-notif-icon" />
+                                {unreadCount > 0 && <span className="feed__notif-badge" aria-label={`${unreadCount} unread`} />}
+                            </span>
                         </ButtonLink>
                     </header>
 
