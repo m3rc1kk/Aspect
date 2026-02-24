@@ -8,7 +8,7 @@ from django.db import models
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     nickname = models.CharField(max_length = 30)
-    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/')
+    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/', null=True)
     badge = models.CharField(max_length = 25, blank = True, null = True)
     awards = models.JSONField(default=list, blank=True)  # e.g. ["flay"]
 

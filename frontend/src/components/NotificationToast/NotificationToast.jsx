@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { getMediaUrl } from '../../api/axiosConfig';
-import avatarPlaceholder from '../../assets/images/Profile/avatar.png';
+import { getAvatarUrl } from '../../utils/avatar.js';
 import likeIcon from '../../assets/images/Notifications/like.svg';
 import subscribeIcon from '../../assets/images/Notifications/subscribe.svg';
 
@@ -19,7 +18,7 @@ export default function NotificationToast({ notification, onClose }) {
     if (!notification?.sender) return null;
 
     const { sender, notification_type } = notification;
-    const avatarSrc = getMediaUrl(sender.avatar) || avatarPlaceholder;
+    const avatarSrc = getAvatarUrl(sender.avatar);
     const actionText = ACTION_TEXT[notification_type] || notification_type;
     const iconSrc = notification_type === 'like' ? likeIcon : subscribeIcon;
     const to = `/profile/${sender.id}`;

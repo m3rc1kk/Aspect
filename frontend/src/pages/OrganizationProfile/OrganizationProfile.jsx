@@ -17,6 +17,7 @@ import { usersApi } from "../../api/usersApi.js";
 import { postsApi } from "../../api/postsApi.js";
 import { organizationsApi } from "../../api/organizationsApi.js";
 import { subscriptionsApi } from "../../api/subscriptionsApi.js";
+import { getAvatarUrl } from "../../utils/avatar.js";
 
 function formatNumber(num) {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'm';
@@ -93,16 +94,14 @@ export default function OrganizationProfile() {
                     <div className="profile__data">
                         <div className="profile__info-wrapper">
                             <div className="profile__info">
-                                {org.avatar && (
-                                    <img
-                                        src={org.avatar}
-                                        alt="avatar"
-                                        width={80}
-                                        height={80}
-                                        loading="lazy"
-                                        className="profile__avatar"
-                                    />
-                                )}
+                                <img
+                                    src={getAvatarUrl(org.avatar)}
+                                    alt="avatar"
+                                    width={80}
+                                    height={80}
+                                    loading="lazy"
+                                    className="profile__avatar"
+                                />
                                 <div className="profile__info-text">
                                     <h1 className="profile__nickname">
                                         {org.nickname || org.username}
@@ -334,15 +333,13 @@ export default function OrganizationProfile() {
                         <div className="profile__org-owner">
                             <span className="profile__org-owner-label">Owner</span>
                             <Link to={currentUser?.id === org.owner?.id ? '/profile' : `/profile/${org.owner?.id}`} className="profile__org-owner-link">
-                                {org.owner?.avatar && (
-                                    <img
-                                        src={org.owner.avatar}
+<img
+                                        src={getAvatarUrl(org.owner?.avatar)}
                                         alt=""
                                         width={32}
                                         height={32}
                                         className="profile__org-owner-avatar"
                                     />
-                                )}
                                 <span className="profile__org-owner-name">{org.owner?.nickname || org.owner?.username}</span>
                             </Link>
                         </div>

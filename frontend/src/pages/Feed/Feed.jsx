@@ -10,6 +10,7 @@ import notif from '../../assets/images/Feed/notif.svg';
 import { postsApi } from "../../api/postsApi.js";
 import { usersApi } from "../../api/usersApi.js";
 import { notificationsApi } from "../../api/notificationsApi.js";
+import { getAvatarUrl } from "../../utils/avatar.js";
 
 
 export default function Feed() {
@@ -95,7 +96,6 @@ export default function Feed() {
     }, [pathname]);
 
     const userName = currentUser?.nickname || currentUser?.username || 'User';
-    const userAvatar = currentUser?.avatar;
 
     return (
         <>
@@ -104,7 +104,7 @@ export default function Feed() {
                 <div className="feed__inner block__inner">
                     <header className="feed__header">
                         <div className="feed__header-body">
-                            {userAvatar && <img src={userAvatar} width={60} height={60} alt="" className="feed__avatar" />}
+                            <img src={getAvatarUrl(currentUser?.avatar)} width={60} height={60} alt="" className="feed__avatar" />
                             <div className="feed__header-info">
                                 <h1 className="feed__hello">Hello, {userName}!</h1>
                                 <span className="feed__description">Ready for fresh news?</span>

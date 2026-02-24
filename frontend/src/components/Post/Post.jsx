@@ -12,6 +12,7 @@ import { likesApi } from "../../api/likesApi.js";
 import { postsApi } from "../../api/postsApi.js";
 import CommentsModal from "../CommentsModal/CommentsModal.jsx";
 import ReportModal from "../ReportModal/ReportModal.jsx";
+import { getAvatarUrl } from "../../utils/avatar.js";
 
 function formatNumber(num) {
     if (num >= 1000000) {
@@ -221,7 +222,7 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                 <div className="post__inner">
                     <header className="post__header">
                         <Link to={authorLink} className="post__author">
-                            {authorAvatar && <img src={authorAvatar} width={40} height={40} loading='lazy' alt="" className="post__author-image"/>}
+                            <img src={getAvatarUrl(authorAvatar)} width={40} height={40} loading="lazy" alt="" className="post__author-image" />
                             <div className="post__author-data">
                                 <h1 className="post__author-nickname">
                                     {authorName}

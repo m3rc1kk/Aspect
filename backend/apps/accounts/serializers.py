@@ -260,5 +260,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         return user
 
 
-
+class GoogleAuthSerializer(serializers.Serializer):
+    id_token = serializers.CharField(required=True)
 

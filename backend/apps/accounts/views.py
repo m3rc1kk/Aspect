@@ -2,12 +2,14 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from apps.accounts.google_auth import verify_google_id_token
 from apps.accounts.models import User
 from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer, UserLoginSerializer, \
     UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, UserStatsSerializer, \
-    UserRegistrationVerifySerializer
+    UserRegistrationVerifySerializer, GoogleAuthSerializer
 from apps.accounts.tasks import send_welcome_email
 from apps.posts.permissions import IsAuthorOrReadOnly
+from config.settings import GOOGLE_CLIENT_ID
 
 
 class UserListView(generics.ListAPIView):
@@ -132,3 +134,55 @@ class PasswordResetConfirmView(generics.GenericAPIView):
             'message': 'Password has been reset successfully'
         }, status=status.HTTP_200_OK)
 
+
+class GoogleAuthView(generics.GenericAPIView):
+    serializer_class = GoogleAuthSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        id_token_str=serializer.validated_data['id_token']
+
+        if not GOOGLE_CLIENT_ID:
+            return Response(
+                 'Google auth is not configured.',
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        payload = verify_google_id_token(id_token_str, GOOGLE_CLIENT_ID)
+
+        if not payload:
+            return Response(
+                'Invalid or expired Google token.',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        email = payload.get('email')
+        if not email:
+            return Response(
+                'Email not provided.',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        name = payload.get('name') or email.split('@')[0]
+
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults = {
+                'username': email,
+                'nickname': name[:30],
+                'is_active': True,
+            }
+        )
+
+        if created:
+            user.set_unusable_password()
+            user.save()
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'user': UserSerializer(user, context=self.get_serializer_context()).data,
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'message': 'Logged in with Google.',
+        }, status=status.HTTP_200_OK)

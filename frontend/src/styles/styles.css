@@ -475,7 +475,8 @@ h1 {
 .form__or::before {
   right: 0;
 }
-.form__google {
+.form__google,
+.form__google-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -486,20 +487,41 @@ h1 {
   height: 55px;
   transition: all var(--transition-duration) ease;
   background-color: var(--color-light);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.form__google-wrapper {
+  min-height: 55px;
+  padding: 0;
+}
+/* Контейнер кнопки Google (renderButton) — не обрезаем, чтобы логотип грузился */
+.form__google-wrapper > div {
+  width: 100% !important;
+  min-height: 55px !important;
+}
+.form__google-wrapper > div > iframe {
+  width: 100% !important;
+  min-height: 55px !important;
+}
+.form__google-icon {
+  flex-shrink: 0;
 }
 @media (hover: hover) {
-  .form__google:hover {
+  .form__google:hover,
+  .form__google-wrapper:hover {
     border: 1px solid var(--color-accent);
     transform: translateY(-2px);
   }
 }
 @media (hover: none) {
-  .form__google:active {
+  .form__google:active,
+  .form__google-wrapper:active {
     border: 1px solid var(--color-accent);
     transform: translateY(-2px);
   }
 }
-.form__google:active {
+.form__google:active,
+.form__google-wrapper:active {
   transform: translateY(0);
 }
 .form__notreg {

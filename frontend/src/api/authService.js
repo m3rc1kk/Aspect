@@ -65,6 +65,25 @@ const authService = {
         }
     },
 
+    signInWithGoogle: async (idToken) => {
+        try {
+            const response = await axiosInstance.post('/auth/google/', { id_token: idToken });
+
+            if (response.data.access && response.data.refresh) {
+                localStorage.setItem('access_token', response.data.access);
+                localStorage.setItem('refresh_token', response.data.refresh);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+            }
+
+            return response.data;
+        } catch (error) {
+            if (!error.response) throw error;
+            const data = error.response.data;
+            const detail = typeof data === 'string' ? data : (data?.detail ?? data?.message);
+            throw { detail: detail || 'Google sign in failed' };
+        }
+    },
+
     logout: async () => {
         try {
             const refreshToken = localStorage.getItem('refresh_token');

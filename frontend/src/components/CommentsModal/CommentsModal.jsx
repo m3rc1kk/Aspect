@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import { Link } from "react-router-dom";
 import { commentsApi } from "../../api/commentsApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { getAvatarUrl } from "../../utils/avatar.js";
 function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -35,7 +36,7 @@ function Reply({ reply, currentUserId, onDelete }) {
     return (
         <div className="post-comments__reply">
             <Link to={authorLink} className="post-comments__comment-avatar-link">
-                {authorAvatar && <img src={authorAvatar} alt="" width={28} height={28} className="post-comments__comment-avatar" />}
+                <img src={getAvatarUrl(authorAvatar)} alt="" width={28} height={28} className="post-comments__comment-avatar" />
             </Link>
             <div className="post-comments__comment-body">
                 <div className="post-comments__comment-header">
@@ -107,7 +108,7 @@ const CommentItem = forwardRef(function CommentItem({ comment, currentUserId, on
     return (
         <div className="post-comments__comment">
             <Link to={authorLink} className="post-comments__comment-avatar-link">
-                {authorAvatar && <img src={authorAvatar} alt="" width={36} height={36} className="post-comments__comment-avatar" />}
+                <img src={getAvatarUrl(authorAvatar)} alt="" width={36} height={36} className="post-comments__comment-avatar" />
             </Link>
             <div className="post-comments__comment-body">
                 <div className="post-comments__comment-header">

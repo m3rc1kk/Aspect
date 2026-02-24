@@ -1,6 +1,7 @@
 import arrow from '../../assets/images/Organization/arrow.svg'
 import verifIcon from '../../assets/images/verif.svg'
 import ButtonLink from "../Button/Button.jsx";
+import { getAvatarUrl } from '../../utils/avatar.js';
 
 export default function Organization({ organization = {} }) {
     const {
@@ -21,7 +22,7 @@ export default function Organization({ organization = {} }) {
     return (
         <div className="organization">
             <ButtonLink to={link} className="organization__inner">
-                {avatar && <img src={avatar} height={52} width={52} loading='lazy' alt="" className="organization__avatar"/>}
+                <img src={getAvatarUrl(avatar)} height={52} width={52} loading='lazy' alt="" className="organization__avatar"/>
                 <div className="organization__info">
                     <h1 className="organization__title">
                         {displayName}

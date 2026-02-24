@@ -29,6 +29,12 @@ export const AuthProvider = ({ children }) => {
         return response;
     };
 
+    const loginWithGoogle = async (idToken) => {
+        const response = await authService.signInWithGoogle(idToken);
+        setUser(response.user);
+        return response;
+    };
+
     const register = async (userData) => {
         const response = await authService.signUp(userData);
         return response;
@@ -56,6 +62,7 @@ export const AuthProvider = ({ children }) => {
     const value = {
         user,
         login,
+        loginWithGoogle,
         register,
         completeSignUp,
         logout,

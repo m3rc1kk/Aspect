@@ -22,6 +22,7 @@ import { subscriptionsApi } from "../../api/subscriptionsApi.js";
 import { organizationsApi } from "../../api/organizationsApi.js";
 import ReportModal from "../../components/ReportModal/ReportModal.jsx";
 import AwardIcon from "../../components/AwardIcon/AwardIcon.jsx";
+import { getAvatarUrl } from "../../utils/avatar.js";
 
 function formatNumber(num) {
     if (num >= 1000000) {
@@ -126,7 +127,7 @@ export default function Profile() {
                     <div className="profile__data">
                         <div className="profile__info-wrapper">
                             <div className="profile__info">
-                                {user.avatar && <img src={user.avatar} alt='avatar' width={80} height={80} loading='lazy' className="profile__avatar" />}
+                                <img src={getAvatarUrl(user.avatar)} alt="avatar" width={80} height={80} loading="lazy" className="profile__avatar" />
                                 <div className="profile__info-text">
                                     <h1 className="profile__nickname">
                                         {user.nickname || user.username}

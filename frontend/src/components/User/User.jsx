@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import AwardIcon from '../AwardIcon/AwardIcon.jsx';
+import { getAvatarUrl } from '../../utils/avatar.js';
 
 export default function User({ user = {} }) {
     const {
@@ -16,7 +17,7 @@ export default function User({ user = {} }) {
     return (
         <Link to={link} className="user" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="user__inner">
-                {avatar && <img src={avatar} width={150} height={150} alt="" className="user__avatar"/>}
+                <img src={getAvatarUrl(avatar)} width={150} height={150} alt="" className="user__avatar"/>
                 <div className="user__body">
                     <h1 className="user__nickname">
                         {nickname}
