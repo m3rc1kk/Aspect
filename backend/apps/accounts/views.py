@@ -6,6 +6,7 @@ from apps.accounts.models import User
 from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer, UserLoginSerializer, \
     UserUpdateSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, UserStatsSerializer, \
     UserRegistrationVerifySerializer
+from apps.accounts.tasks import send_welcome_email
 from apps.posts.permissions import IsAuthorOrReadOnly
 
 
@@ -39,6 +40,7 @@ class UserRegistrationVerifyView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        send_welcome_email.delay(user.id)
         refresh = RefreshToken.for_user(user)
         return Response({
             'user': UserSerializer(user, context=self.get_serializer_context()).data,

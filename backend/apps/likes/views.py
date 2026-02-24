@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from apps.accounts.models import User
 from apps.accounts.serializers import UserSerializer
 from apps.likes.models import Like
+from apps.likes.redis_counters import incr_likes, decr_likes
 from apps.likes.serializers import LikeSerializer, LikeCreateSerializer
 from apps.posts.models import Post
 from apps.posts.serializers import PostSerializer
@@ -43,6 +44,8 @@ class LikeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_409_CONFLICT
             )
 
+        incr_likes(post.id)
+
         return Response(
             LikeSerializer(like).data,
             status=status.HTTP_201_CREATED
@@ -50,7 +53,9 @@ class LikeViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         like = get_object_or_404(Like, user=request.user, post_id=pk)
+        post_id = like.post_id
         like.delete()
+        decr_likes(post_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

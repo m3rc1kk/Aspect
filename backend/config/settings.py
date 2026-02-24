@@ -179,6 +179,7 @@ CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localho
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
@@ -190,3 +191,19 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
 
 SIGNUP_CODE_REDIS_PREFIX = 'signup_code:'
 SIGNUP_CODE_TTL_SECONDS = 900
+
+LIKE_CODE_REDIS_PREFIX = 'likes:post:'
+
+CACHE_REDIS_URL = config('CACHE_REDIS_URL', default='redis://redis:6379/1')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': CACHE_REDIS_URL,
+        'KEY_PREFIX': 'aspect',
+        'TIMEOUT': 300,
+    }
+}
+
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
+

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from rest_framework import viewsets, generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -12,6 +13,7 @@ from ..accounts.serializers import UserSerializer
 from ..organizations.models import Organization
 from ..organizations.serializers import OrganizationSerializer
 
+SEARCH_CACHE_TIMEOUT = 120
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().select_related('author', 'organization').prefetch_related('images')
@@ -62,6 +64,13 @@ class SearchView(generics.GenericAPIView):
                 'organizations': [],
             })
 
+        cache_key = f"search:{q.lower()}"
+
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return Response(cached)
+
+
         users = User.objects.filter(
             Q(username__icontains=q) | Q(nickname__icontains=q))[:20]
 
@@ -71,6 +80,14 @@ class SearchView(generics.GenericAPIView):
 
         organizations = Organization.objects.filter(
             Q(username__icontains=q) | Q(nickname__icontains=q))[:20]
+
+        data = {
+            'users': UserSerializer(users, many=True, context={'request': request}).data,
+            'posts': PostSerializer(posts, many=True, context={'request': request}).data,
+            'organizations': OrganizationSerializer(organizations, many=True, context={'request': request}).data,
+        }
+
+        cache.set(cache_key, data, timeout=SEARCH_CACHE_TIMEOUT)
 
         return Response({
             'users': UserSerializer(users, many=True, context={'request': request}).data,

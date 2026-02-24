@@ -1,3 +1,6 @@
+from datetime import timedelta
+from django.utils import timezone
+
 from celery import shared_task
 from django.contrib.auth import get_user_model
 
@@ -37,3 +40,9 @@ def notify_subscription(recipient_id, sender_id):
         sender=sender,
         notification_type='subscription',
     )
+
+@shared_task
+def cleanup_old_notifications(days=7):
+    threshold = timezone.now() - timedelta(days=days)
+    deleted_count, _ = Notification.objects.filter(created_at__lt=threshold).delete()
+    return deleted_count

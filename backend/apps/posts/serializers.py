@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from apps.accounts.serializers import UserSerializer
+from apps.likes.redis_counters import get_likes_count
 from apps.organizations.models import Organization
 from apps.organizations.serializers import OrganizationSerializer
 from apps.posts.models import Post, PostImage
@@ -27,7 +28,7 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
     def get_likes_count(self, obj):
-        return obj.likes.count()
+        return get_likes_count(obj)
 
     def get_is_liked(self, obj):
         request = self.context.get('request')

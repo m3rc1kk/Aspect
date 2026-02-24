@@ -47,6 +47,20 @@ services:
       redis:
         condition: service_started
   
+  celery-beat:
+    build:
+      context: ./backend
+    command: celery -A config.celery beat -l info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - backend/.env
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_started
+
   flower:
     build:
       context: ./backend
