@@ -65,7 +65,7 @@ const authService = {
         }
     },
 
-    signInWithGoogle: async (idToken) => {
+    googleAuth: async (idToken) => {
         try {
             const response = await axiosInstance.post('/auth/google/', { id_token: idToken });
 
@@ -78,9 +78,7 @@ const authService = {
             return response.data;
         } catch (error) {
             if (!error.response) throw error;
-            const data = error.response.data;
-            const detail = typeof data === 'string' ? data : (data?.detail ?? data?.message);
-            throw { detail: detail || 'Google sign in failed' };
+            throw error.response.data || { message: 'Google sign in failed' };
         }
     },
 

@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const loginWithGoogle = async (idToken) => {
-        const response = await authService.signInWithGoogle(idToken);
+        const response = await authService.googleAuth(idToken);
         setUser(response.user);
         return response;
     };

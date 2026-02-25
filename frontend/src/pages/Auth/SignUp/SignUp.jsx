@@ -1,13 +1,11 @@
 import Form from "../../../components/Form/Form.jsx";
-import googleIcon from "../../../assets/images/Auth/google.svg";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonLink from "../../../components/Button/Button.jsx";
+import GoogleSignInButton from "../../../components/GoogleSignInButton/GoogleSignInButton.jsx";
 import AvatarUpload from "../../../components/AvatarUpload/AvatarUpload.jsx";
 import Input from "../../../components/Input/Input.jsx";
 import { useAuth } from "../../../context/AuthContext.jsx";
-
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
@@ -18,51 +16,8 @@ export default function SignUp() {
     const [avatar, setAvatar] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const [googleReady, setGoogleReady] = useState(false);
-    const callbackRef = useRef(null);
     const navigate = useNavigate();
     const { register, loginWithGoogle } = useAuth();
-
-    callbackRef.current = (response) => {
-        if (!response?.credential) return;
-        setError('');
-        loginWithGoogle(response.credential)
-            .then(() => navigate('/feed'))
-            .catch((err) => {
-                const msg = err?.detail ?? err?.message ?? 'Google sign in failed';
-                setError(typeof msg === 'string' ? msg : 'Google sign in failed');
-            });
-    };
-
-    useEffect(() => {
-        if (!GOOGLE_CLIENT_ID) return;
-        const check = () => {
-            if (window.google?.accounts?.id) {
-                setGoogleReady(true);
-                return true;
-            }
-            return false;
-        };
-        if (check()) return;
-        const t = setInterval(() => { if (check()) clearInterval(t); }, 100);
-        return () => clearInterval(t);
-    }, []);
-
-    useEffect(() => {
-        if (!googleReady || !GOOGLE_CLIENT_ID) return;
-        window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: (response) => callbackRef.current?.(response),
-            locale: 'en',
-        });
-    }, [googleReady]);
-
-    const handleGoogleClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
-        window.google.accounts.id.prompt();
-    };
 
     const handleUsernameChange = (e) => {
         let next = String(e.target.value ?? "");
@@ -211,14 +166,23 @@ export default function SignUp() {
                         Or
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleGoogleClick}
+                    <GoogleSignInButton
                         className="form__google signup__form-google"
-                        disabled={!GOOGLE_CLIENT_ID}
-                    >
-                        Continue with Google
-                    </button>
+                        disabled={loading}
+                        onSuccess={async (idToken) => {
+                            setError("");
+                            setLoading(true);
+                            try {
+                                await loginWithGoogle(idToken);
+                                navigate("/feed");
+                            } catch (err) {
+                                const msg = err.detail || err.message || "Google sign in failed.";
+                                setError(msg);
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                    />
 
                     <div className="form__notreg signup__form-notreg">
                         <span className="form__notreg-text signup__form-notreg-text">Already have an account?</span> <ButtonLink to="/sign-in" className="form__notreg-link signup__form-notreg-link">Sign In</ButtonLink>
