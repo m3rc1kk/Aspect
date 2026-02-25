@@ -18,3 +18,7 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} - {self.nickname} - {self.email}"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['-date_joined'], name='user_date_joined_idx'),
+        ]

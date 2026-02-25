@@ -40,3 +40,6 @@ class Notification(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Notification'
         verbose_name_plural = 'Notifications'
+        indexes = [
+            models.Index(fields=['recipient', 'read', '-created_at'], name='notif_recipient_read_idx'),
+        ]

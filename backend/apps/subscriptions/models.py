@@ -19,6 +19,9 @@ class Subscription(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Subscription'
         verbose_name_plural = 'Subscriptions'
+        indexes = [
+            models.Index(fields=['follower', '-created_at'], name='sub_follower_created_idx'),
+        ]
 
 
     def __str__(self):
@@ -50,6 +53,9 @@ class OrganizationSubscription(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Organization Subscription'
         verbose_name_plural = 'Organization Subscriptions'
+        indexes = [
+            models.Index(fields=['follower', '-created_at'], name='orgsub_follower_created_idx'),
+        ]
 
     def __str__(self):
         return f'{self.follower} | {self.following}'

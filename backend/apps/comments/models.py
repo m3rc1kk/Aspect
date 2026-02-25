@@ -22,5 +22,8 @@ class Comment(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
+        indexes = [
+            models.Index(fields=['post', 'parent', '-created_at'], name='comment_post_parent_idx'),
+        ]
 
 

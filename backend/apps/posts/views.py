@@ -89,8 +89,4 @@ class SearchView(generics.GenericAPIView):
 
         cache.set(cache_key, data, timeout=SEARCH_CACHE_TIMEOUT)
 
-        return Response({
-            'users': UserSerializer(users, many=True, context={'request': request}).data,
-            'posts': PostSerializer(posts, many=True, context={'request': request}).data,
-            'organizations': OrganizationSerializer(organizations, many=True, context={'request': request}).data,
-        })
+        return Response(data)

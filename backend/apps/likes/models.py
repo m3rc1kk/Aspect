@@ -20,3 +20,8 @@ class Like(models.Model):
 
         verbose_name = 'Like'
         verbose_name_plural = 'Likes'
+
+
+        indexes = [
+            models.Index(fields=['post', '-created_at'], name='like_post_created_idx'),
+        ]

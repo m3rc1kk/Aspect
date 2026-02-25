@@ -51,6 +51,11 @@ class Report(models.Model):
             ),
         ]
 
+        indexes = [
+            models.Index(fields=['reporter', '-created_at'], name='report_reporter_created_idx'),
+            models.Index(fields=['status', '-created_at'], name='report_status_created_idx'),
+        ]
+
     def __str__(self):
         return f'{self.reporter} - {self.target_type} - {self.reason}'
 

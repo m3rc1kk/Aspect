@@ -20,6 +20,10 @@ class Post(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+        indexes = [
+            models.Index(fields=['author', '-created_at'], name='post_author_created_idx'),
+            models.Index(fields=['organization', '-created_at'], name='post_org_created_idx'),
+        ]
 
 
 
