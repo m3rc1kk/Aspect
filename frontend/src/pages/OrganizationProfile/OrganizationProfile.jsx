@@ -64,10 +64,9 @@ export default function OrganizationProfile() {
         if (!org) return;
         const fetchPosts = async () => {
             try {
-                const data = await postsApi.getPosts(100, 0);
-                const postsArray = Array.isArray(data) ? data : (data?.results || []);
-                const orgPosts = postsArray.filter(p => p.organization?.id === org.id);
-                setPosts(orgPosts);
+                const data = await postsApi.getPosts(null, { organization: org.id });
+                const postsArray = data?.results ?? [];
+                setPosts(postsArray);
             } catch (err) {
                 console.error('Error fetching org posts:', err);
             }

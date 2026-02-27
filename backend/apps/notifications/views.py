@@ -10,6 +10,7 @@ from apps.notifications.serializers import NotificationSerializer
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
+    ordering = ['-created_at']
 
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.request.user).select_related('sender', 'post', 'post__author')

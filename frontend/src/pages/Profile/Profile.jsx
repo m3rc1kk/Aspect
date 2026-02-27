@@ -83,8 +83,8 @@ export default function Profile() {
             const authorId = userId || currentUser?.id;
             if (!authorId) return;
             
-            const data = await postsApi.getPosts(100, 0, { author: authorId });
-            const postsArray = Array.isArray(data) ? data : (data?.results || []);
+            const data = await postsApi.getPosts(null, { author: authorId });
+            const postsArray = data?.results ?? [];
             const userPosts = postsArray.filter(post => !post.organization);
             setPosts(userPosts);
         } catch (err) {

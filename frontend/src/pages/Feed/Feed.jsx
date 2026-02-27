@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header.jsx";
 import ButtonLink from "../../components/Button/Button.jsx";
@@ -16,6 +16,10 @@ import { getAvatarUrl } from "../../utils/avatar.js";
 export default function Feed() {
     const { pathname } = useLocation();
     const [posts, setPosts] = useState([]);
+    const [nextCursor, setNextCursor] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const loadMoreRef = useRef(null);
     const [currentUser, setCurrentUser] = useState(() => {
         try { return JSON.parse(localStorage.getItem('user')) || null; }
         catch { return null; }
@@ -35,16 +39,58 @@ export default function Feed() {
         }
     };
 
-    const fetchPosts = async () => {
+    const parseCursor = (nextUrl) => {
+        if (!nextUrl || typeof nextUrl !== 'string') return null;
         try {
-            const data = await postsApi.getPosts();
-            const postsArray = Array.isArray(data) ? data : (data?.results || []);
-            setPosts(postsArray);
+            return nextUrl.startsWith('http') ? new URL(nextUrl).searchParams.get('cursor') : nextUrl;
+        } catch {
+            return null;
+        }
+    };
+
+    const fetchPosts = async () => {
+        setLoading(true);
+        try {
+            const data = await postsApi.getPosts(null);
+            const list = data?.results ?? [];
+            setPosts(list);
+            setNextCursor(parseCursor(data?.next) ?? null);
         } catch (err) {
             console.error('Error fetching posts:', err);
             setPosts([]);
+            setNextCursor(null);
+        } finally {
+            setLoading(false);
         }
     };
+
+    const loadMorePosts = useCallback(async () => {
+        if (!nextCursor || loadingMore) return;
+        setLoadingMore(true);
+        try {
+            const data = await postsApi.getPosts(nextCursor);
+            const list = data?.results ?? [];
+            setPosts(prev => [...prev, ...list]);
+            setNextCursor(parseCursor(data?.next) ?? null);
+        } catch (err) {
+            console.error('Error loading more posts:', err);
+        } finally {
+            setLoadingMore(false);
+        }
+    }, [nextCursor, loadingMore]);
+
+    useEffect(() => {
+        const el = loadMoreRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0]?.isIntersecting && nextCursor && !loadingMore) loadMorePosts();
+            },
+            { rootMargin: '200px', threshold: 0 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [nextCursor, loadingMore, loadMorePosts]);
 
     const handlePostSubmit = async (content, images = []) => {
         try {
@@ -119,7 +165,17 @@ export default function Feed() {
                     </header>
 
                     <PostComposer onSubmit={handlePostSubmit} />
-                    <PostList posts={posts} currentUserId={currentUser?.id} onDelete={handlePostDelete} />
+                    {loading ? (
+                        <p className="feed__loading">Loading feed…</p>
+                    ) : (
+                        <>
+                            <PostList posts={posts} currentUserId={currentUser?.id} onDelete={handlePostDelete} />
+                            {nextCursor && (
+                                <div ref={loadMoreRef} className="feed__load-more-sentinel" aria-hidden="true" />
+                            )}
+                            {loadingMore && <p className="feed__loading-more">Loading more…</p>}
+                        </>
+                    )}
                     {allUsers.length > 0 && (
                         <UserList
                             className={'feed__user-list'}

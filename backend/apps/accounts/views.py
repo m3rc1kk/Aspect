@@ -72,7 +72,7 @@ class UserLoginView(generics.GenericAPIView):
 class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserStatsSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]
 
     def get_object(self):
         pk = self.kwargs.get('pk')
@@ -146,21 +146,21 @@ class GoogleAuthView(generics.GenericAPIView):
 
         if not GOOGLE_CLIENT_ID:
             return Response(
-                 'Google auth is not configured.',
+                {'detail': 'Google auth is not configured.'},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
         payload = verify_google_id_token(id_token_str, GOOGLE_CLIENT_ID)
 
         if not payload:
             return Response(
-                'Invalid or expired Google token.',
+                {'detail': 'Invalid or expired Google token.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         email = payload.get('email')
         if not email:
             return Response(
-                'Email not provided.',
+                {'detail': 'Email not provided.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 

@@ -1,11 +1,22 @@
 import axiosInstance from './axiosConfig';
 
 export const postsApi = {
-    getPosts: async (limit = 20, offset = 0, params = {}) => {
+    /**
+     * Лента постов с курсорной пагинацией.
+     * @param {string|null} cursor - курсор для следующей страницы (null = первая страница)
+     * @param {object} params - фильтры: author, organization, page_size
+     * @returns {{ results: array, next: string|null, previous: string|null }}
+     */
+    getPosts: async (cursor = null, params = {}) => {
         try {
-            const response = await axiosInstance.get('/posts/', {
-                params: { limit, offset, ...params }
-            });
+            const query = { ...params };
+            if (cursor) {
+                const value = typeof cursor === 'string' && cursor.startsWith('http')
+                    ? new URL(cursor).searchParams.get('cursor')
+                    : cursor;
+                if (value) query.cursor = value;
+            }
+            const response = await axiosInstance.get('/posts/', { params: query });
             return response.data;
         } catch (error) {
             console.error('Error fetching posts:', error.response?.data || error.message);

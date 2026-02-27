@@ -14,6 +14,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    ordering = ['-created_at']
 
 
     def get_serializer_class(self):

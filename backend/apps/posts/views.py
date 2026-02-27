@@ -12,8 +12,10 @@ from ..accounts.models import User
 from ..accounts.serializers import UserSerializer
 from ..organizations.models import Organization
 from ..organizations.serializers import OrganizationSerializer
+from config.pagination import FeedCursorPagination
 
 SEARCH_CACHE_TIMEOUT = 120
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().select_related('author', 'organization').prefetch_related('images')
@@ -21,6 +23,8 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     http_method_names = ['post', 'get', 'delete']
+    ordering = ['-created_at']
+    pagination_class = FeedCursorPagination
 
     def get_queryset(self):
         queryset = Post.objects.all().select_related('author', 'organization').prefetch_related('images')
@@ -39,6 +43,10 @@ class PostViewSet(viewsets.ModelViewSet):
             return PostCreateSerializer
         return PostSerializer
 
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        return [IsAuthorOrReadOnly()]
 
     def perform_create(self, serializer):
         org_id = self.request.data.get('organization')

@@ -7,6 +7,7 @@ class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.select_related('reporter', 'post', 'user')
     serializer_class = ReportSerializer
     http_method_names = ['get', 'post', 'put', 'delete']
+    ordering = ['-created_at']
 
     def get_permissions(self):
         if self.action == 'create':
