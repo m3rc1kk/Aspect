@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('aspect-admin-panel/', admin.site.urls),
 
     path('api/v1/', include('apps.accounts.urls')),
     path('api/v1/', include('apps.posts.urls')),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/v1/', include('apps.reports.urls')),
     path('api/v1/', include('apps.notifications.urls')),
     path('api/v1/', include('apps.adminpanel.urls')),
+    path('', include('django_prometheus.urls')),
 ]
 
 

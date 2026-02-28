@@ -2,7 +2,6 @@ import logging
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
-logger = logging.getLogger(__name__)
 
 def verify_google_id_token(token, expected_client_id):
     try:
@@ -14,5 +13,4 @@ def verify_google_id_token(token, expected_client_id):
         )
         return payload
     except Exception as e:
-        logger.error("Google token verification failed: %s", str(e))
         return None

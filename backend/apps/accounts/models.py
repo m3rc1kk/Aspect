@@ -22,3 +22,5 @@ class User(AbstractUser):
         indexes = [
             models.Index(fields=['-date_joined'], name='user_date_joined_idx'),
         ]
+        
+        

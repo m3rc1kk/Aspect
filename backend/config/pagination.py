@@ -1,4 +1,3 @@
-"""Курсорная пагинация для ленты: сортировка по created_at (в DRF по умолчанию — created)."""
 from rest_framework.pagination import CursorPagination
 
 

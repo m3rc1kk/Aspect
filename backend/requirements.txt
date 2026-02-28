@@ -22,3 +22,4 @@ google-auth==2.36.0
 pytest==8.3.3
 pytest-django==4.9.0
 factory-boy==3.3.0
+django-prometheus>=2.3.0
