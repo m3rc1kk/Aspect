@@ -16,10 +16,12 @@
     border-radius: var(--border-radius-big);
     transition: all var(--transition-duration) ease;
     animation: fadeInUp 0.4s ease-out;
-
+  
     @include mobile {
       border: 0;
       padding: 0;
+      max-width: 400px;
+      width: 100%;
     }
   }
 

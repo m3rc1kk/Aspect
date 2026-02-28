@@ -46,6 +46,7 @@ LOCAL_APPS = [
     'apps.organizations.apps.OrganizationsConfig',
     'apps.reports.apps.ReportsConfig',
     'apps.notifications.apps.NotificationsConfig',
+    'apps.adminpanel.apps.AdminpanelConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

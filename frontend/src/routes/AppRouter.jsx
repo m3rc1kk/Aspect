@@ -10,12 +10,13 @@ import Feed from "../pages/Feed/Feed.jsx";
 import Notifications from "../pages/Notifications/Notifications.jsx";
 import SearchPage from "../pages/SearchPage/SearchPage.jsx";
 import Chats from "../pages/Chats/Chats.jsx";
-import AdminStats from "../pages/Admin/Stats/Stats.jsx";
-import AdminComplaints from "../pages/Admin/Complaints/Complaints.jsx";
 import OrganizationProfile from "../pages/OrganizationProfile/OrganizationProfile.jsx";
+import AdminDashboard from "../pages/Admin/AdminDashboard/AdminDashboard.jsx";
+import AdminReports from "../pages/Admin/AdminReports/AdminReports.jsx";
+import AdminUsers from "../pages/Admin/AdminUsers/AdminUsers.jsx";
+import AdminOrganizations from "../pages/Admin/AdminOrganizations/AdminOrganizations.jsx";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute.jsx";
 import AdminRoute from "../components/AdminRoute/AdminRoute.jsx";
-
 export default function AppRouter() {
     return (
         <>
@@ -62,15 +63,24 @@ export default function AppRouter() {
                         <Chats />
                     </ProtectedRoute>
                 } />
-
-                <Route path="/admin/stats" element={
+                <Route path="/admin" element={
                     <AdminRoute>
-                        <AdminStats />
+                        <AdminDashboard />
                     </AdminRoute>
                 } />
-                <Route path="/admin/complaints" element={
+                <Route path="/admin/reports" element={
                     <AdminRoute>
-                        <AdminComplaints />
+                        <AdminReports />
+                    </AdminRoute>
+                } />
+                <Route path="/admin/users" element={
+                    <AdminRoute>
+                        <AdminUsers />
+                    </AdminRoute>
+                } />
+                <Route path="/admin/organizations" element={
+                    <AdminRoute>
+                        <AdminOrganizations />
                     </AdminRoute>
                 } />
 

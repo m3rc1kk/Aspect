@@ -4,7 +4,7 @@ from apps.reports.serializers import ReportSerializer, ReportCreateSerializer, R
 
 
 class ReportViewSet(viewsets.ModelViewSet):
-    queryset = Report.objects.select_related('reporter', 'post', 'user')
+    queryset = Report.objects.select_related('reporter', 'post', 'post__author', 'post__organization', 'user')
     serializer_class = ReportSerializer
     http_method_names = ['get', 'post', 'put', 'delete']
     ordering = ['-created_at']
@@ -22,7 +22,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         return ReportSerializer
 
     def get_queryset(self):
-        queryset = Report.objects.select_related('reporter', 'post', 'user')
+        queryset = Report.objects.select_related('reporter', 'post', 'post__author', 'post__organization', 'user')
 
         reporter_id = self.request.query_params.get('reporter')
         if reporter_id:

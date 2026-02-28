@@ -201,11 +201,11 @@ export default function Profile() {
 
                                             {user?.is_staff && (
                                                 <li className="settings-overlay__item">
-                                                    <ButtonLink to={'/admin/stats'} className={'settings-overlay__button settings-overlay__dark-theme'}>
+                                                    <ButtonLink to={'/admin'} className={'settings-overlay__button settings-overlay__dark-theme'}>
                                                         <img src={admin} loading='lazy' width={44} height={44} alt="" className="settings-overlay__button-icon" />
                                                         <div className="settings-overlay__button-body">
                                                             <h1 className="settings-overlay__button-title">Admin Panel</h1>
-                                                            <span className="settings-overlay__button-description">Welcome back, MMU</span>
+                                                            <span className="settings-overlay__button-description">Dashboard and metrics</span>
                                                         </div>
                                                     </ButtonLink>
                                                 </li>

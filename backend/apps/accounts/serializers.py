@@ -29,7 +29,7 @@ class UserStatsSerializer(UserSerializer):
     post_count = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + ['is_following', 'followers_count', 'following_count', 'comments_count', 'likes_count', 'post_count']
+        fields = UserSerializer.Meta.fields + ['date_joined', 'is_following', 'followers_count', 'following_count', 'comments_count', 'likes_count', 'post_count']
 
     def get_is_following(self, obj):
         request = self.context.get('request')

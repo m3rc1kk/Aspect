@@ -2,10 +2,13 @@ from django.db import IntegrityError
 from rest_framework import serializers
 from .models import Report
 from ..accounts.serializers import UserSerializer
+from ..posts.serializers import PostSerializer
 
 
 class ReportSerializer(serializers.ModelSerializer):
     reporter = UserSerializer(read_only=True)
+    post = PostSerializer(read_only=True, allow_null=True)
+    user = UserSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Report
@@ -76,3 +79,21 @@ class ReportStatusSerializer(serializers.ModelSerializer):
         if value not in dict(Report.Status.choices):
             raise serializers.ValidationError({'status': 'Must be one of: ' + str(Report.Status.choices)})
         return value
+
+    
+    def update(self, instance, validated_data):
+        new_status = validated_data.get('status')
+
+        if instance.status in (Report.Status.DISMISSED, Report.Status.RESOLVED):
+            raise serializers.ValidationError('Report is already dismissed or resolved.')
+        
+        if new_status == Report.Status.RESOLVED and instance.target_type == Report.TargetType.POST and instance.post_id:
+            post_to_delete = instance.post
+            instance.post = None
+            instance.status = new_status
+            instance.save(update_fields=['status', 'post'])
+            post_to_delete.delete()
+        else:
+            instance.status = new_status
+            instance.save(update_fields=['status'])
+        return instance
