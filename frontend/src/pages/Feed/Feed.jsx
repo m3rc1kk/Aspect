@@ -48,7 +48,7 @@ export default function Feed() {
         }
     };
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         setLoading(true);
         try {
             const data = await postsApi.getPosts(null);
@@ -62,7 +62,7 @@ export default function Feed() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const loadMorePosts = useCallback(async () => {
         if (!nextCursor || loadingMore) return;
@@ -130,7 +130,7 @@ export default function Feed() {
         fetchPosts();
         fetchUsers();
         fetchUnreadCount();
-    }, []);
+    }, [fetchPosts]);
 
     useEffect(() => {
         const interval = setInterval(fetchUnreadCount, 60000);

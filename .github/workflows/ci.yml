@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend:
-    name: Backend (tests)
+    name: Backend
     runs-on: ubuntu-latest
 
     services:
@@ -69,7 +69,7 @@ jobs:
         run: pytest
 
   frontend:
-    name: Frontend (lint + build)
+    name: Frontend
     runs-on: ubuntu-latest
 
     steps:

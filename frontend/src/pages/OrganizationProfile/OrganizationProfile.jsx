@@ -36,7 +36,7 @@ export default function OrganizationProfile() {
     const [editNickname, setEditNickname] = useState('');
     const [editAvatar, setEditAvatar] = useState(null);
     const [editError, setEditError] = useState('');
-    const [editLoading, setEditLoading] = useState(false);
+    const [_editLoading, setEditLoading] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
     const [isToggling, setIsToggling] = useState(false);

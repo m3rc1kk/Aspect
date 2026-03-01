@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import authService from '../api/authService';
 
@@ -18,9 +19,9 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const currentUser = authService.getCurrentUser();
         if (currentUser) {
-            setUser(currentUser);
+            queueMicrotask(() => setUser(currentUser));
         }
-        setLoading(false);
+        queueMicrotask(() => setLoading(false));
     }, []);
 
     const login = async (credentials) => {

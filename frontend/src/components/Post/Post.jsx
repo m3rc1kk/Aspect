@@ -148,17 +148,17 @@ function PostImageGrid({ images, onImageClick }) {
 }
 
 export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
-    if (!post) return null;
-
-    const [isLiked, setIsLiked] = useState(post.is_liked || false);
-    const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+    const [isLiked, setIsLiked] = useState(post?.is_liked ?? false);
+    const [likesCount, setLikesCount] = useState(post?.likes_count ?? 0);
     const [isLiking, setIsLiking] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showComments, setShowComments] = useState(false);
-    const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
+    const [commentsCount, setCommentsCount] = useState(post?.comments_count ?? 0);
     const [showReport, setShowReport] = useState(false);
+
+    if (!post) return null;
 
     const hasOrg = !!post.organization;
     const authorAvatar = hasOrg

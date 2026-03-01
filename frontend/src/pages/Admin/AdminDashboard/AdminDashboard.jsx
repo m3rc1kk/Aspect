@@ -89,15 +89,6 @@ export default function AdminDashboard() {
         month: 'long',
     });
 
-    if (error && !data) {
-        return (
-            <div className="admin-dashboard admin-dashboard--error">
-                <p>{error}</p>
-                <Link to="/feed">Back to Feed</Link>
-            </div>
-        );
-    }
-
     const m = data?.metrics || {};
     const charts = data?.charts || {};
     const regChart = charts.registrations_by_day || { labels: [], data: [] };
@@ -209,6 +200,15 @@ export default function AdminDashboard() {
         }),
         [activityLabels, activityValues]
     );
+
+    if (error && !data) {
+        return (
+            <div className="admin-dashboard admin-dashboard--error">
+                <p>{error}</p>
+                <Link to="/feed">Back to Feed</Link>
+            </div>
+        );
+    }
 
     return (
         <div className="admin-dashboard">

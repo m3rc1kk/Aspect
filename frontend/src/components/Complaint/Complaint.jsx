@@ -1,7 +1,6 @@
 import ButtonLink from "../Button/Button.jsx";
 
 import avatar from '../../assets/images/Profile/avatar.png'
-import like from '../../assets/images/Notifications/like.svg'
 import arrow from '../../assets/images/Organization/arrow.svg'
 
 export default function Complaint() {

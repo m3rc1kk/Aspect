@@ -6,8 +6,8 @@ import authService from "../../../api/authService.js";
 export default function ResetPasswordEmail() {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [_success, setSuccess] = useState("");
+    const [_loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const inputs = [

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { notificationsApi } from '../../api/notificationsApi.js';
 import NotificationToast, {
     MAX_VISIBLE_TOASTS,
@@ -12,11 +12,11 @@ function useNotificationsPolling(enabled) {
     const isFirstRunRef = useRef(true);
     const timeoutsRef = useRef([]);
 
-    const dismissToast = (id) => {
+    const dismissToast = useCallback((id) => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-    };
+    }, []);
 
-    const processNotifications = (notifications) => {
+    const processNotifications = useCallback((notifications) => {
         const newOnes = notifications.filter((n) => !seenIdsRef.current.has(n.id));
         newOnes.forEach((n) => seenIdsRef.current.add(n.id));
         if (isFirstRunRef.current) {
@@ -33,7 +33,7 @@ function useNotificationsPolling(enabled) {
             const t = setTimeout(() => dismissToast(n.id), TOAST_AUTO_DISMISS_MS);
             timeoutsRef.current.push(t);
         });
-    };
+    }, [dismissToast]);
 
     useEffect(() => {
         if (!enabled) return;
@@ -55,7 +55,7 @@ function useNotificationsPolling(enabled) {
             timeoutsRef.current.forEach(clearTimeout);
             timeoutsRef.current = [];
         };
-    }, [enabled]);
+    }, [enabled, processNotifications]);
 
     return { toasts, dismissToast };
 }

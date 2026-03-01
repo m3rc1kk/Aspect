@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Header from "../../components/Header/Header.jsx";
@@ -49,17 +49,17 @@ export default function Profile() {
     const [editNickname, setEditNickname] = useState('');
     const [editAvatar, setEditAvatar] = useState(null);
     const [editError, setEditError] = useState('');
-    const [editLoading, setEditLoading] = useState(false);
+    const [_editLoading, setEditLoading] = useState(false);
     const [organizations, setOrganizations] = useState([]);
     const [showCreateOrg, setShowCreateOrg] = useState(false);
     const [orgUsername, setOrgUsername] = useState('');
     const [orgNickname, setOrgNickname] = useState('');
     const [orgAvatar, setOrgAvatar] = useState(null);
     const [orgError, setOrgError] = useState('');
-    const [orgLoading, setOrgLoading] = useState(false);
+    const [_orgLoading, setOrgLoading] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
 
-    const fetchUser = async () => {
+    const fetchUser = useCallback(async () => {
         try {
             const currentUserData = await usersApi.getCurrentUser();
             setCurrentUser(currentUserData);
@@ -74,15 +74,15 @@ export default function Profile() {
         } catch (err) {
             console.error('Error fetching user:', err);
         }
-    };
+    }, [userId]);
 
     const isOwnProfile = !userId || (currentUser && parseInt(userId) === currentUser.id);
 
-    const fetchUserPosts = async () => {
+    const fetchUserPosts = useCallback(async () => {
         try {
             const authorId = userId || currentUser?.id;
             if (!authorId) return;
-            
+
             const data = await postsApi.getPosts(null, { author: authorId });
             const postsArray = data?.results ?? [];
             const userPosts = postsArray.filter(post => !post.organization);
@@ -90,9 +90,9 @@ export default function Profile() {
         } catch (err) {
             console.error('Error fetching user posts:', err);
         }
-    };
+    }, [userId, currentUser?.id]);
 
-    const fetchOrganizations = async () => {
+    const fetchOrganizations = useCallback(async () => {
         try {
             const ownerId = userId || currentUser?.id;
             if (!ownerId) return;
@@ -102,18 +102,18 @@ export default function Profile() {
         } catch (err) {
             console.error('Error fetching organizations:', err);
         }
-    };
+    }, [userId, currentUser?.id]);
 
     useEffect(() => {
         fetchUser();
-    }, [userId]);
+    }, [fetchUser]);
 
     useEffect(() => {
         if (user) {
             fetchUserPosts();
             fetchOrganizations();
         }
-    }, [user]);
+    }, [user, fetchUserPosts, fetchOrganizations]);
 
     if (!user) {
         return null;

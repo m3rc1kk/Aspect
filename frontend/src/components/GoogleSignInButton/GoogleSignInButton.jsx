@@ -3,13 +3,17 @@ import googleIcon from '../../assets/images/Auth/google.svg';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-export default function GoogleSignInButton({ onSuccess, onError, disabled, className = '' }) {
+export default function GoogleSignInButton({ onSuccess, disabled, className = '' }) {
     const googleContainerRef = useRef(null);
     const onSuccessRef = useRef(onSuccess);
-    onSuccessRef.current = onSuccess;
+
+    useEffect(() => {
+        onSuccessRef.current = onSuccess;
+    }, [onSuccess]);
 
     useEffect(() => {
         if (!GOOGLE_CLIENT_ID || !googleContainerRef.current) return;
+        const containerEl = googleContainerRef.current;
 
         const init = () => {
             if (!window.google?.accounts?.id) return;
@@ -26,7 +30,7 @@ export default function GoogleSignInButton({ onSuccess, onError, disabled, class
 
             const el = document.createElement('div');
             el.setAttribute('data-google-button', '1');
-            googleContainerRef.current.appendChild(el);
+            containerEl.appendChild(el);
             window.google.accounts.id.renderButton(el, {
                 type: 'standard',
                 theme: 'outline',
@@ -49,10 +53,8 @@ export default function GoogleSignInButton({ onSuccess, onError, disabled, class
         if (window.google?.accounts?.id) {
             init();
             return () => {
-                if (googleContainerRef.current) {
-                    const child = googleContainerRef.current.querySelector('[data-google-button]');
-                    if (child) child.remove();
-                }
+                const child = containerEl.querySelector('[data-google-button]');
+                if (child) child.remove();
             };
         }
 
@@ -64,10 +66,8 @@ export default function GoogleSignInButton({ onSuccess, onError, disabled, class
         }, 100);
         return () => {
             clearInterval(interval);
-            if (googleContainerRef.current) {
-                const child = googleContainerRef.current.querySelector('[data-google-button]');
-                if (child) child.remove();
-            }
+            const child = containerEl.querySelector('[data-google-button]');
+            if (child) child.remove();
         };
     }, []);
 
