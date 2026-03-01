@@ -4,8 +4,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
-from .models import Post
+from django.db.models import Q, Prefetch
+from .models import Post, PostImage
 from .permissions import IsAuthorOrReadOnly
 from .serializers import PostSerializer, PostCreateSerializer
 from ..accounts.models import User
@@ -14,11 +14,25 @@ from ..organizations.models import Organization
 from ..organizations.serializers import OrganizationSerializer
 from config.pagination import FeedCursorPagination
 
+from django.db.models import Q, Count, Case, When, Value, IntegerField
+from django.utils import timezone
+from datetime import timedelta
+from ..subscriptions.models import Subscription
+from ..subscriptions.models import OrganizationSubscription
+
 SEARCH_CACHE_TIMEOUT = 120
+
+# Только одобренные модерацией картинки отдаём в API
+APPROVED_IMAGES_PREFETCH = Prefetch(
+    'images',
+    queryset=PostImage.objects.filter(
+        moderation_status=PostImage.ModerationStatus.APPROVED
+    ).order_by('order'),
+)
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().select_related('author', 'organization').prefetch_related('images')
+    queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(APPROVED_IMAGES_PREFETCH)
     serializer_class = PostSerializer
     permission_classes = [IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -27,8 +41,7 @@ class PostViewSet(viewsets.ModelViewSet):
     pagination_class = FeedCursorPagination
 
     def get_queryset(self):
-        queryset = Post.objects.all().select_related('author', 'organization').prefetch_related('images')
-        
+        queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(APPROVED_IMAGES_PREFETCH)
 
         author_id = self.request.query_params.get('author', None)
         if author_id is not None:
@@ -59,6 +72,47 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, organization=organization)
 
 
+class FeedView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        followed_user_ids = list(
+            Subscription.objects.filter(follower=user).values_list('following_id', flat=True)
+        )
+        followed_org_ids = list(
+            OrganizationSubscription.objects.filter(follower=user).values_list('following_id', flat=True)
+        )
+
+        subscription_q = Q(author=user)
+        if followed_user_ids:
+            subscription_q |= Q(author_id__in=followed_user_ids)
+        if followed_org_ids:
+            subscription_q |= Q(organization_id__in=followed_org_ids)
+
+        popular_cutoff = timezone.now() - timedelta(days=30)
+
+        return (
+            Post.objects.select_related('author', 'organization')
+            .prefetch_related(APPROVED_IMAGES_PREFETCH)
+            .annotate(
+                likes_count_annotated=Count('likes'),
+                is_subscription=Case(
+                    When(subscription_q, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                ),
+            ).filter(
+                subscription_q
+                | (
+                    Q(created_at__gte=popular_cutoff)
+                    & Q(likes__isnull=False) 
+                )
+            )
+            .order_by('-is_subscription', '-likes_count_annotated', '-created_at')
+        )
+
 
 class SearchView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -84,7 +138,7 @@ class SearchView(generics.GenericAPIView):
 
         posts = Post.objects.filter(
             content__icontains=q
-        ).select_related('author', 'organization').prefetch_related('images')[:20]
+        ).select_related('author', 'organization').prefetch_related(APPROVED_IMAGES_PREFETCH)[:20]
 
         organizations = Organization.objects.filter(
             Q(username__icontains=q) | Q(nickname__icontains=q))[:20]

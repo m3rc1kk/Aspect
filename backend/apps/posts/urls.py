@@ -8,5 +8,6 @@ router.register(r'posts', views.PostViewSet, basename='post')
 
 urlpatterns = [
     path('', include(router.urls)),
-path('search/', views.SearchView.as_view(), name='search'),
+    path('search/', views.SearchView.as_view(), name='search'),
+    path('feed/', views.FeedView.as_view(), name='feed')
 ]

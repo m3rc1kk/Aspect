@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -17,7 +18,12 @@ class UserListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return User.objects.exclude(id=self.request.user.id).order_by('-date_joined')[:50]
+        qs = User.objects.exclude(id=self.request.user.id)
+        if self.request.query_params.get('popular'):
+            qs = qs.annotate(followers_count=Count('followers')).order_by('-followers_count')[:10]
+        else:
+            qs = qs.order_by('-date_joined')[:50]
+        return qs
 
 
 class UserRegistrationView(generics.CreateAPIView):

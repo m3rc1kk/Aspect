@@ -61,6 +61,8 @@ coverage.xml
 *.py,cover
 .hypothesis/
 local_settings.py
+aspect.json
+config/aspect.json
 
 # Node / frontend
 node_modules/

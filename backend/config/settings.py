@@ -52,7 +52,7 @@ LOCAL_APPS = [
     'apps.adminpanel.apps.AdminpanelConfig',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + ['cachalot']
 
 
 MIDDLEWARE = [
@@ -265,3 +265,19 @@ SPECTACULAR_SETTINGS = {
     'SCHEMA_PATH_PREFIX': r'/api/v1',
     'SECURITY': [{'BearerAuth': []}],
 }
+
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get(
+    'GOOGLE_APPLICATION_CREDENTIALS',
+    os.path.join(BASE_DIR, 'config', 'aspect.json')
+)
+
+CACHALOT_ONLY_CACHABLE_TABLES = {
+    'posts_post',
+    'posts_postimage',
+    'accounts_user',
+    'organizations_organization',
+}
+
+CACHALOT_TIMEOUT = 600
+
+CACHALOT_CACHE = 'default'

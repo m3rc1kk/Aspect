@@ -16,7 +16,7 @@ import { getAvatarUrl } from "../../utils/avatar.js";
 export default function Feed() {
     const { pathname } = useLocation();
     const [posts, setPosts] = useState([]);
-    const [nextCursor, setNextCursor] = useState(null);
+    const [nextPage, setNextPage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const loadMoreRef = useRef(null);
@@ -39,58 +39,49 @@ export default function Feed() {
         }
     };
 
-    const parseCursor = (nextUrl) => {
-        if (!nextUrl || typeof nextUrl !== 'string') return null;
-        try {
-            return nextUrl.startsWith('http') ? new URL(nextUrl).searchParams.get('cursor') : nextUrl;
-        } catch {
-            return null;
-        }
-    };
-
     const fetchPosts = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await postsApi.getPosts(null);
+            const data = await postsApi.getFeed(1);
             const list = data?.results ?? [];
             setPosts(list);
-            setNextCursor(parseCursor(data?.next) ?? null);
+            setNextPage(data?.next ? 2 : null);
         } catch (err) {
-            console.error('Error fetching posts:', err);
+            console.error('Error fetching feed:', err);
             setPosts([]);
-            setNextCursor(null);
+            setNextPage(null);
         } finally {
             setLoading(false);
         }
     }, []);
 
     const loadMorePosts = useCallback(async () => {
-        if (!nextCursor || loadingMore) return;
+        if (!nextPage || loadingMore) return;
         setLoadingMore(true);
         try {
-            const data = await postsApi.getPosts(nextCursor);
+            const data = await postsApi.getFeed(nextPage);
             const list = data?.results ?? [];
             setPosts(prev => [...prev, ...list]);
-            setNextCursor(parseCursor(data?.next) ?? null);
+            setNextPage(data?.next ? nextPage + 1 : null);
         } catch (err) {
             console.error('Error loading more posts:', err);
         } finally {
             setLoadingMore(false);
         }
-    }, [nextCursor, loadingMore]);
+    }, [nextPage, loadingMore]);
 
     useEffect(() => {
         const el = loadMoreRef.current;
         if (!el) return;
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0]?.isIntersecting && nextCursor && !loadingMore) loadMorePosts();
+                if (entries[0]?.isIntersecting && nextPage && !loadingMore) loadMorePosts();
             },
             { rootMargin: '200px', threshold: 0 }
         );
         observer.observe(el);
         return () => observer.disconnect();
-    }, [nextCursor, loadingMore, loadMorePosts]);
+    }, [nextPage, loadingMore, loadMorePosts]);
 
     const handlePostSubmit = async (content, images = []) => {
         try {
@@ -108,11 +99,10 @@ export default function Feed() {
 
     const fetchUsers = async () => {
         try {
-            const data = await usersApi.getAll();
-            const usersArray = Array.isArray(data) ? data : (data?.results || []);
-            setAllUsers(usersArray);
+            const usersArray = await usersApi.getPopular();
+            setAllUsers(Array.isArray(usersArray) ? usersArray : []);
         } catch (err) {
-            console.error('Error fetching users:', err);
+            console.error('Error fetching popular users:', err);
         }
     };
 
@@ -170,7 +160,7 @@ export default function Feed() {
                     ) : (
                         <>
                             <PostList posts={posts} currentUserId={currentUser?.id} onDelete={handlePostDelete} />
-                            {nextCursor && (
+                            {nextPage && (
                                 <div ref={loadMoreRef} className="feed__load-more-sentinel" aria-hidden="true" />
                             )}
                             {loadingMore && <p className="feed__loading-more">Loading more…</p>}

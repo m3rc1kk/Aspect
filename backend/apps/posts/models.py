@@ -28,10 +28,21 @@ class Post(models.Model):
 
 
 class PostImage(models.Model):
+    class ModerationStatus(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        APPROVED = 'approved', 'Approved'
+        REJECTED = 'rejected', 'Rejected'
+    
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='posts/%Y/%m/%d/')
     order = models.PositiveIntegerField(default=0)
-
+    moderation_status = models.CharField(
+        max_length=20,
+        choices=ModerationStatus.choices,
+        default=ModerationStatus.PENDING,
+        db_index=True,
+    )
+    
     def __str__(self):
         return f'{self.post} - {self.image}'
 

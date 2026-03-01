@@ -11,6 +11,18 @@ export const usersApi = {
         }
     },
 
+    /** Топ-10 пользователей по подписчикам (для ленты). */
+    getPopular: async () => {
+        try {
+            const response = await axiosInstance.get('/users/', { params: { popular: 1 } });
+            const data = response.data;
+            return Array.isArray(data) ? data : data?.results ?? [];
+        } catch (error) {
+            console.error('Error fetching popular users:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
     getCurrentUser: async () => {
         try {
             const response = await axiosInstance.get('/profile/');
