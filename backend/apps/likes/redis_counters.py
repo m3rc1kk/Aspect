@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 def get_redis():
-    return redis.from_url(settings.CELERY_BROKER_URL, decode_responses=True)
+    return redis.from_url(settings.REDIS_URL, decode_responses=True)
 
 def incr_likes(post_id):
     r = get_redis()

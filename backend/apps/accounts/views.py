@@ -2,7 +2,9 @@ from django.db.models import Count
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
 
+from config.throttles import AuthRateThrottle, AuthUserRateThrottle
 from apps.accounts.google_auth import verify_google_id_token
 from apps.accounts.models import User
 from apps.accounts.serializers import UserRegistrationSerializer, UserSerializer, UserLoginSerializer, \
@@ -30,6 +32,7 @@ class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -43,6 +46,7 @@ class UserRegistrationView(generics.CreateAPIView):
 class UserRegistrationVerifyView(generics.CreateAPIView):
     serializer_class = UserRegistrationVerifySerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -60,6 +64,7 @@ class UserRegistrationVerifyView(generics.CreateAPIView):
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -117,6 +122,7 @@ class UserLogoutView(generics.GenericAPIView):
 class PasswordResetView(generics.GenericAPIView):
     serializer_class = PasswordResetSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -130,6 +136,7 @@ class PasswordResetView(generics.GenericAPIView):
 class PasswordResetConfirmView(generics.GenericAPIView):
     serializer_class = PasswordResetConfirmSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -141,9 +148,14 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         }, status=status.HTTP_200_OK)
 
 
+class ThrottledTokenRefreshView(TokenRefreshView):
+    throttle_classes = [AuthUserRateThrottle]
+
+
 class GoogleAuthView(generics.GenericAPIView):
     serializer_class = GoogleAuthSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

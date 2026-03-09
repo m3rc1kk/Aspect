@@ -13,6 +13,7 @@ from ..accounts.serializers import UserSerializer
 from ..organizations.models import Organization
 from ..organizations.serializers import OrganizationSerializer
 from config.pagination import FeedCursorPagination
+from config.throttles import PostRateThrottle
 
 from django.db.models import Q, Count, Case, When, Value, IntegerField
 from django.utils import timezone
@@ -37,6 +38,11 @@ class PostViewSet(viewsets.ModelViewSet):
     http_method_names = ['post', 'get', 'delete']
     ordering = ['-created_at']
     pagination_class = FeedCursorPagination
+
+    def get_throttles(self):
+        if self.action == 'create':
+            return [PostRateThrottle()]
+        return []
 
     def get_queryset(self):
         queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(IMAGES_PREFETCH)

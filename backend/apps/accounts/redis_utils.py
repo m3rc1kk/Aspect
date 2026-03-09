@@ -7,7 +7,7 @@ def generate_code():
     return ''.join(random.choices(string.digits, k=6))
 
 def get_redis():
-    return redis.from_url(settings.CELERY_BROKER_URL, decode_responses=True)
+    return redis.from_url(settings.REDIS_URL, decode_responses=True)
 
 def set_signup_code(email, code):
     r = get_redis()

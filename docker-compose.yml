@@ -18,6 +18,17 @@ services:
     ports:
       - "6379:6379"
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -45,6 +56,8 @@ services:
     depends_on:
       backend:
         condition: service_started
+      rabbitmq:
+        condition: service_healthy
       redis:
         condition: service_started
   
@@ -59,6 +72,8 @@ services:
     depends_on:
       backend:
         condition: service_started
+      rabbitmq:
+        condition: service_healthy
       redis:
         condition: service_started
 
@@ -71,6 +86,8 @@ services:
     env_file:
       - backend/.env
     depends_on:
+      rabbitmq:
+        condition: service_healthy
       redis:
         condition: service_started
       celery:

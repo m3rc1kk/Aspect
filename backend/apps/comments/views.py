@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
+from config.throttles import CommentRateThrottle
 from apps.comments.models import Comment
 from apps.comments.serializers import CommentSerializer, CommentCreateSerializer, CommentDetailSerializer
 
@@ -12,6 +13,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = CommentSerializer
     http_method_names = ['get', 'post', 'delete']
+
+    def get_throttles(self):
+        if self.action == 'create':
+            return [CommentRateThrottle()]
+        return []
 
     def get_serializer_class(self):
         if self.action == 'create':

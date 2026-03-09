@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions
+from config.throttles import ReportRateThrottle
 from apps.reports.models import Report
 from apps.reports.serializers import ReportSerializer, ReportCreateSerializer, ReportStatusSerializer
 
@@ -8,6 +9,11 @@ class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
     http_method_names = ['get', 'post', 'put', 'delete']
     ordering = ['-created_at']
+
+    def get_throttles(self):
+        if self.action == 'create':
+            return [ReportRateThrottle()]
+        return []
 
     def get_permissions(self):
         if self.action == 'create':

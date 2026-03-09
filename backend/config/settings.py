@@ -152,6 +152,16 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_THROTTLE_RATES': {
+        'auth': '5/minute',
+        'auth_user': '20/minute',
+        'post': '15/minute',
+        'message': '30/minute',
+        'comment': '20/minute',
+        'like': '60/minute',
+        'subscription': '30/minute',
+        'report': '5/minute',
+    },
 }
 
 from datetime import timedelta
@@ -182,11 +192,10 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@localhost:5672//')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
@@ -203,6 +212,7 @@ SIGNUP_CODE_TTL_SECONDS = 900
 LIKE_CODE_REDIS_PREFIX = 'likes:post:'
 
 CACHE_REDIS_URL = config('CACHE_REDIS_URL', default='redis://redis:6379/1')
+REDIS_URL = config('REDIS_URL', default=CACHE_REDIS_URL)
 
 CACHES = {
     'default': {

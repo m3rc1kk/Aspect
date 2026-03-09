@@ -1,7 +1,5 @@
 from django.contrib import admin
 from django.urls import path
-from rest_framework_simplejwt.views import TokenRefreshView
-
 from . import views
 from .views import GoogleAuthView
 
@@ -15,6 +13,6 @@ urlpatterns = [
     path('profile/<int:pk>/', views.UserProfileView.as_view(), name='profile-detail'),
     path('password/reset/', views.PasswordResetView.as_view(), name='password_reset'),
     path('password/reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_done'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('token/refresh/', views.ThrottledTokenRefreshView.as_view(), name='token-refresh'),
     path('auth/google/', GoogleAuthView.as_view(), name='google-auth'),
 ]

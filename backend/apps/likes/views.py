@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from config.throttles import LikeRateThrottle
 from apps.accounts.models import User
 from apps.accounts.serializers import UserSerializer
 from apps.likes.models import Like
@@ -16,6 +17,11 @@ from apps.posts.serializers import PostSerializer
 class LikeViewSet(viewsets.ModelViewSet):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_throttles(self):
+        if self.action in ('create', 'destroy'):
+            return [LikeRateThrottle()]
+        return []
 
     def get_queryset(self):
         return Like.objects.filter(user=self.request.user).select_related('post', 'user', 'post__author').prefetch_related('post__images')

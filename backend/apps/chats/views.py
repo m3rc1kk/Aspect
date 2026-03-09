@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from config.throttles import MessageRateThrottle
 from .models import Chat, Message
 from .permissions import IsChatParticipant
 from .serializers import (
@@ -19,6 +20,13 @@ from .serializers import (
 class ChatViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_throttles(self):
+        if self.action == 'create':
+            return [MessageRateThrottle()]
+        if self.action == 'messages' and self.request.method == 'POST':
+            return [MessageRateThrottle()]
+        return []
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

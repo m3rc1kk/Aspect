@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from config.throttles import SubscriptionRateThrottle
 from apps.accounts.models import User
 from apps.accounts.serializers import UserStatsSerializer
 from apps.organizations.models import Organization
@@ -16,6 +17,11 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Subscription.objects.all()
     http_method_names = ['get', 'post', 'delete']
+
+    def get_throttles(self):
+        if self.action in ('create', 'destroy'):
+            return [SubscriptionRateThrottle()]
+        return []
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -126,6 +132,11 @@ class OrganizationSubscriptionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     queryset = OrganizationSubscription.objects.all()
     http_method_names = ['get', 'post', 'delete']
+
+    def get_throttles(self):
+        if self.action in ('create', 'destroy'):
+            return [SubscriptionRateThrottle()]
+        return []
 
     def get_serializer_class(self):
         if self.action == 'create':
