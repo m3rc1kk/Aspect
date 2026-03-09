@@ -260,11 +260,15 @@ if config('DJANGO_ENV', default='dev') == 'prod':
         },
     }
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
     CSRF_TRUSTED_ORIGINS = [
         'https://aspectfy.ru',
         'https://www.aspectfy.ru',
+        'http://aspectfy.ru',
+        'http://www.aspectfy.ru',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
     ]
     CSRF_COOKIE_SAMESITE = 'Lax'
     SESSION_COOKIE_SAMESITE = 'Lax'
@@ -284,6 +288,16 @@ else:
         'https://aspectfy.ru',
         'http://aspectfy.ru',
     ]
+    CSRF_TRUSTED_ORIGINS = [
+        'https://aspectfy.ru',
+        'https://www.aspectfy.ru',
+        'http://aspectfy.ru',
+        'http://www.aspectfy.ru',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+    ]
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
     LOG_DIR = config('LOG_DIR', default=str(BASE_DIR / 'logs'))
     os.makedirs(LOG_DIR, exist_ok=True)
     LOGGING = {
