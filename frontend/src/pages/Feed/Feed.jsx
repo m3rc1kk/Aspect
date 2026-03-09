@@ -42,10 +42,10 @@ export default function Feed() {
     const fetchPosts = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await postsApi.getFeed(null);
+            const data = await postsApi.getFeed(1);
             const list = data?.results ?? [];
             setPosts(list);
-            setNextPage(data?.next ?? null);
+            setNextPage(data?.next ? 2 : null);
         } catch (err) {
             console.error('Error fetching feed:', err);
             setPosts([]);
@@ -56,13 +56,13 @@ export default function Feed() {
     }, []);
 
     const loadMorePosts = useCallback(async () => {
-        if (!nextPage || loadingMore) return;
+        if (nextPage == null || loadingMore) return;
         setLoadingMore(true);
         try {
             const data = await postsApi.getFeed(nextPage);
             const list = data?.results ?? [];
-            setPosts(prev => [...prev, ...list]);
-            setNextPage(data?.next ?? null);
+            setPosts((prev) => [...prev, ...list]);
+            setNextPage(data?.next ? nextPage + 1 : null);
         } catch (err) {
             console.error('Error loading more posts:', err);
         } finally {
