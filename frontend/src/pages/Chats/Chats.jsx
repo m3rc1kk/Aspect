@@ -54,7 +54,7 @@ export default function Chats() {
             const list = Array.isArray(data) ? data : data.results || [];
             setChats(list);
             return list;
-        } catch (e) {
+        } catch {
             setChats([]);
             return [];
         } finally {
@@ -74,7 +74,7 @@ export default function Chats() {
             const data = await chatsApi.getMessages(chat.id);
             const list = data.results || (Array.isArray(data) ? data : []);
             setMessages(list.reverse());
-        } catch (e) {
+        } catch {
             setMessages([]);
         } finally {
             setLoadingMessages(false);
@@ -112,7 +112,7 @@ export default function Chats() {
                     if (prev.some((m) => m.id === msg.id)) return prev;
                     return [...prev, msg];
                 });
-            } catch (_) {}
+            } catch { /* ignore parse error */ }
         };
 
         ws.onclose = () => {
@@ -123,13 +123,13 @@ export default function Chats() {
             ws.close();
             wsRef.current = null;
         };
-    }, [activeChat?.id]);
+    }, [activeChat]);
 
     const currentUserId = (() => {
         try {
             const u = localStorage.getItem('user');
             return u ? JSON.parse(u).id : null;
-        } catch (_) {
+        } catch {
             return null;
         }
     })();
@@ -156,7 +156,7 @@ export default function Chats() {
                 if (withoutOpt.some((m) => m.id === msg.id)) return withoutOpt;
                 return [...withoutOpt, { ...msg, sender_id: msg.sender ?? msg.sender_id }];
             });
-        } catch (_) {
+        } catch {
             setMessages((prev) => prev.filter((m) => m.id !== optId));
             setInputText(text);
         } finally {
