@@ -17,6 +17,17 @@ import AdminUsers from "../pages/Admin/AdminUsers/AdminUsers.jsx";
 import AdminOrganizations from "../pages/Admin/AdminOrganizations/AdminOrganizations.jsx";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute.jsx";
 import AdminRoute from "../components/AdminRoute/AdminRoute.jsx";
+import { useEffect } from "react";
+
+
+function DjangoAdminRedirect() {
+    useEffect(() => {
+        const full = window.location.pathname + window.location.search + window.location.hash;
+        window.location.replace(full);
+    }, []);
+    return null;
+}
+
 export default function AppRouter() {
     return (
         <>
@@ -83,6 +94,9 @@ export default function AppRouter() {
                         <AdminOrganizations />
                     </AdminRoute>
                 } />
+
+                {/* Django admin: полная загрузка страницы, чтобы запрос ушёл в Nginx → backend */}
+                <Route path="/aspect-admin-panel/*" element={<DjangoAdminRedirect />} />
 
                 <Route path="/" element={<Navigate to="/feed" replace />} />
                 <Route path="*" element={<Navigate to="/feed" replace />} />
