@@ -8,7 +8,7 @@ from django.conf import settings
 
 @shared_task
 def sync_likes_count_from_db():
-    r = redis.from_url(settings.CELERY_BROKER_URL, decode_responses=True)
+    r = redis.from_url(settings.REDIS_URL, decode_responses=True)
     counts = (
         Post.objects.values("id")
         .annotate(like_count=Count("likes"))
