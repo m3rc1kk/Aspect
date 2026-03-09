@@ -65,11 +65,7 @@ services:
     environment:
       DJANGO_ENV: prod
       DB_HOST: 127.0.0.1
-      CELERY_BROKER_URL: redis://127.0.0.1:6379/0
-      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/0
-      REDIS_URL: redis://127.0.0.1:6379/0
-      CACHE_REDIS_URL: redis://127.0.0.1:6379/1
-      CHANNEL_LAYERS_REDIS: redis://127.0.0.1:6379/2
+      REDIS_HOST: 127.0.0.1
     depends_on:
       - backend
       - redis
@@ -85,10 +81,7 @@ services:
     environment:
       DJANGO_ENV: prod
       DB_HOST: 127.0.0.1
-      CELERY_BROKER_URL: redis://127.0.0.1:6379/0
-      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/0
-      CACHE_REDIS_URL: redis://127.0.0.1:6379/1
-      CHANNEL_LAYERS_REDIS: redis://127.0.0.1:6379/2
+      REDIS_HOST: 127.0.0.1
     depends_on:
       - backend
       - redis

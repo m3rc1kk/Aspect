@@ -173,8 +173,18 @@ SIGNUP_CODE_REDIS_PREFIX = 'signup_code:'
 SIGNUP_CODE_TTL_SECONDS = 900
 LIKE_CODE_REDIS_PREFIX = 'likes:post:'
 
-CACHE_REDIS_URL = config('CACHE_REDIS_URL', default='redis://redis:6379/1')
-REDIS_URL = config('REDIS_URL', default=CACHE_REDIS_URL)
+# REDIS_HOST задаётся только для Celery в prod (network_mode: host), чтобы не резолвить "redis"
+_redis_host = config('REDIS_HOST', default=None)
+if _redis_host:
+    CACHE_REDIS_URL = f'redis://{_redis_host}:6379/1'
+    REDIS_URL = f'redis://{_redis_host}:6379/0'
+    CELERY_BROKER_URL = config('CELERY_BROKER_URL', default=f'redis://{_redis_host}:6379/0')
+    CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default=f'redis://{_redis_host}:6379/0')
+    _channel_layers_redis = f'redis://{_redis_host}:6379/2'
+else:
+    CACHE_REDIS_URL = config('CACHE_REDIS_URL', default='redis://redis:6379/1')
+    REDIS_URL = config('REDIS_URL', default=CACHE_REDIS_URL)
+    _channel_layers_redis = config('CHANNEL_LAYERS_REDIS', default=CACHE_REDIS_URL)
 
 CACHES = {
     'default': {
@@ -211,7 +221,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [config('CHANNEL_LAYERS_REDIS', default=CACHE_REDIS_URL)],
+            'hosts': [_channel_layers_redis],
         },
     },
 }
