@@ -80,7 +80,6 @@ class FeedView(generics.ListAPIView):
     pagination_class = FeedListCursorPagination
 
     def get_queryset(self):
-        # Топ-5 по лайкам за последние 24 часа
         day_ago = timezone.now() - timedelta(hours=24)
         top5_ids = list(
             Post.objects.filter(created_at__gte=day_ago)

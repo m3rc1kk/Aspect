@@ -173,10 +173,10 @@ SIGNUP_CODE_REDIS_PREFIX = 'signup_code:'
 SIGNUP_CODE_TTL_SECONDS = 900
 LIKE_CODE_REDIS_PREFIX = 'likes:post:'
 
-# REDIS_HOST задаётся только для Celery в prod (network_mode: host), чтобы не резолвить "redis"
+
 _redis_host = config('REDIS_HOST', default=None)
 if _redis_host:
-    # Не читать из env — в .env указан redis:6379, он не резолвится при network_mode: host
+   
     CACHE_REDIS_URL = f'redis://{_redis_host}:6379/1'
     REDIS_URL = f'redis://{_redis_host}:6379/0'
     CELERY_BROKER_URL = f'redis://{_redis_host}:6379/0'
