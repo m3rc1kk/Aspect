@@ -262,6 +262,12 @@ if config('DJANGO_ENV', default='dev') == 'prod':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    CSRF_TRUSTED_ORIGINS = [
+        'https://aspectfy.ru',
+        'https://www.aspectfy.ru',
+    ]
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SAMESITE = 'Lax'
 else:
     DEBUG = True
     ALLOWED_HOSTS = ['*']
