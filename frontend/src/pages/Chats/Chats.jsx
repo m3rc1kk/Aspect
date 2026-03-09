@@ -23,9 +23,13 @@ import sendIcon from '../../assets/images/Chats/send.svg';
 import settingsIcon from '../../assets/images/Chats/settings.svg';
 import backIcon from "../../assets/images/Notifications/back.svg";
 
-const API_BASE = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, '')
-    : (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}:8000` : 'http://localhost:8000');
+const getApiBase = () => {
+    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, '');
+    if (typeof window === 'undefined') return '';
+    if (window.location.hostname === 'localhost' || window.location.port === '5173') return `${window.location.protocol}//${window.location.hostname}:8000`;
+    return window.location.origin.replace(/\/$/, '');
+};
+const API_BASE = getApiBase();
 
 function formatMessageTime(iso) {
     if (!iso) return '';

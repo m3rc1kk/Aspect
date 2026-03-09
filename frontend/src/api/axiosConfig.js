@@ -1,10 +1,13 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, '')
-    : (typeof window !== 'undefined' ? `http://${window.location.hostname}:8000` : 'http://localhost:8000');
-const API_URL = (import.meta.env.VITE_API_URL
-    || (typeof window !== 'undefined' ? `http://${window.location.hostname}:8000/api/v1` : 'http://localhost:8000/api/v1'));
+const getDefaultBase = () => {
+    if (typeof window === 'undefined') return '';
+    const origin = window.location.origin.replace(/\/$/, '');
+    if (window.location.hostname === 'localhost' || window.location.port === '5173') return `http://${window.location.hostname}:8000`;
+    return origin;
+};
+const API_BASE = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, '') : getDefaultBase();
+const API_URL = import.meta.env.VITE_API_URL || (API_BASE ? `${API_BASE}/api/v1` : '/api/v1');
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
