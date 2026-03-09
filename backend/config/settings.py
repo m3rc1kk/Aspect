@@ -219,7 +219,7 @@ CHANNEL_LAYERS = {
 # Dev vs Prod
 if config('DJANGO_ENV', default='dev') == 'prod':
     DEBUG = False
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'aspectfy.ru', 'www.aspectfy.ru']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'aspectfy.ru', 'www.aspectfy.ru', '5.42.111.113']
     CORS_ALLOW_ALL_ORIGINS = False
     CORS_ALLOWED_ORIGINS = [
         'http://localhost:5173',
