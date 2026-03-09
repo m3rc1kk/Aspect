@@ -93,6 +93,25 @@ services:
       - redis
     restart: unless-stopped
 
+  flower:
+    build:
+      context: ./backend
+    command: celery -A config.celery flower --port=5555
+    env_file:
+      - backend/.env
+    environment:
+      DJANGO_ENV: prod
+    ports:
+      - "5555:5555"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      celery:
+        condition: service_started
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
