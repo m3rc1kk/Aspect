@@ -12,7 +12,7 @@ from ..accounts.models import User
 from ..accounts.serializers import UserSerializer
 from ..organizations.models import Organization
 from ..organizations.serializers import OrganizationSerializer
-from config.pagination import FeedCursorPagination, FeedListCursorPagination, FeedPageNumberPagination
+from config.pagination import FeedCursorPagination, FeedListCursorPagination
 from config.throttles import PostRateThrottle
 
 from django.db.models import Q, Count, Case, When, Value, IntegerField, F
@@ -77,7 +77,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class FeedView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
-    pagination_class = FeedPageNumberPagination
+    pagination_class = FeedListCursorPagination
 
     def get_queryset(self):
         day_ago = timezone.now() - timedelta(hours=24)
