@@ -176,10 +176,11 @@ LIKE_CODE_REDIS_PREFIX = 'likes:post:'
 # REDIS_HOST задаётся только для Celery в prod (network_mode: host), чтобы не резолвить "redis"
 _redis_host = config('REDIS_HOST', default=None)
 if _redis_host:
+    # Не читать из env — в .env указан redis:6379, он не резолвится при network_mode: host
     CACHE_REDIS_URL = f'redis://{_redis_host}:6379/1'
     REDIS_URL = f'redis://{_redis_host}:6379/0'
-    CELERY_BROKER_URL = config('CELERY_BROKER_URL', default=f'redis://{_redis_host}:6379/0')
-    CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default=f'redis://{_redis_host}:6379/0')
+    CELERY_BROKER_URL = f'redis://{_redis_host}:6379/0'
+    CELERY_RESULT_BACKEND = f'redis://{_redis_host}:6379/0'
     _channel_layers_redis = f'redis://{_redis_host}:6379/2'
 else:
     CACHE_REDIS_URL = config('CACHE_REDIS_URL', default='redis://redis:6379/1')
