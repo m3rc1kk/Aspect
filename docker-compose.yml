@@ -32,6 +32,7 @@ services:
   backend:
     build:
       context: ./backend
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
     ports:
       - "8000:8000"
     volumes:
@@ -39,6 +40,8 @@ services:
       - ./backend/logs:/app/logs
     env_file:
       - backend/.env
+    environment:
+      DJANGO_ENV: dev
     depends_on:
       db:
         condition: service_healthy
@@ -53,6 +56,8 @@ services:
       - ./backend:/app
     env_file:
       - backend/.env
+    environment:
+      DJANGO_ENV: dev
     depends_on:
       backend:
         condition: service_started
@@ -69,6 +74,8 @@ services:
       - ./backend:/app
     env_file:
       - backend/.env
+    environment:
+      DJANGO_ENV: dev
     depends_on:
       backend:
         condition: service_started
@@ -85,6 +92,8 @@ services:
       - "5555:5555"
     env_file:
       - backend/.env
+    environment:
+      DJANGO_ENV: dev
     depends_on:
       rabbitmq:
         condition: service_healthy

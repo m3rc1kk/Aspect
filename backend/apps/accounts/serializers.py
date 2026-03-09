@@ -214,14 +214,12 @@ class PasswordResetSerializer(serializers.Serializer):
 
     def save(self):
         email = self.validated_data['email']
-        user = User.objects.get(email=email)
+        user = User.objects.filter(email=email).first()
 
         if user:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-
             reset_link = f'{FRONTEND_URL}/password/reset/{uid}/{token}'
-
             send_password_reset_email.delay(
                 email=email,
                 subject='Aspect - Reset Password',
