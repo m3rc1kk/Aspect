@@ -63,6 +63,11 @@ export default function AppRouter() {
                         <Chats />
                     </ProtectedRoute>
                 } />
+                {/* Редирект со слеша на без слеша, чтобы перезагрузка не меняла URL */}
+                <Route path="/admin/" element={<Navigate to="/admin" replace />} />
+                <Route path="/admin/reports/" element={<Navigate to="/admin/reports" replace />} />
+                <Route path="/admin/users/" element={<Navigate to="/admin/users" replace />} />
+                <Route path="/admin/organizations/" element={<Navigate to="/admin/organizations" replace />} />
                 <Route path="/admin" element={
                     <AdminRoute>
                         <AdminDashboard />
