@@ -3,8 +3,12 @@ from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import AccessToken
+
+
+def _get_anonymous_user():
+    from django.contrib.auth.models import AnonymousUser
+    return AnonymousUser()
 
 
 @database_sync_to_async
@@ -16,7 +20,7 @@ def get_user_from_token(token_key):
         User = apps.get_model(settings.AUTH_USER_MODEL)
         return User.objects.get(pk=user_id)
     except Exception:
-        return AnonymousUser()
+        return _get_anonymous_user()
 
 
 class JWTAuthMiddleware(BaseMiddleware):
@@ -28,5 +32,5 @@ class JWTAuthMiddleware(BaseMiddleware):
         if token:
             scope['user'] = await get_user_from_token(token)
         else:
-            scope['user'] = AnonymousUser()
+            scope['user'] = _get_anonymous_user()
         return await super().__call__(scope, receive, send)
