@@ -1,8 +1,7 @@
 from rest_framework.pagination import CursorPagination, PageNumberPagination
 
 
-class FeedPagePagination(PageNumberPagination):
-    """Page-based для ленты (CursorPagination ломается при ordering по is_today_top5)."""
+class FeedPageNumberPagination(PageNumberPagination):
     page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 100

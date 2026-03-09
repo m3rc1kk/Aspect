@@ -56,12 +56,12 @@ export default function Feed() {
     }, []);
 
     const loadMorePosts = useCallback(async () => {
-        if (nextPage == null || loadingMore) return;
+        if (!nextPage || loadingMore) return;
         setLoadingMore(true);
         try {
             const data = await postsApi.getFeed(nextPage);
             const list = data?.results ?? [];
-            setPosts((prev) => [...prev, ...list]);
+            setPosts(prev => [...prev, ...list]);
             setNextPage(data?.next ? nextPage + 1 : null);
         } catch (err) {
             console.error('Error loading more posts:', err);

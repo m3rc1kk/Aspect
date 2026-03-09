@@ -2,10 +2,10 @@ import axiosInstance from './axiosConfig';
 
 export const postsApi = {
     /**
-     * Персональная лента (page-based).
+     * Персональная лента: подписки + популярные посты (page-based).
      * @param {number} page - номер страницы (1-based)
      * @param {number} pageSize - размер страницы
-     * @returns {{ results: array, next: string|null, previous: string|null, count?: number }}
+     * @returns {{ results: array, next: string|null, previous: string|null, count: number }}
      */
     getFeed: async (page = 1, pageSize = 20) => {
         try {
