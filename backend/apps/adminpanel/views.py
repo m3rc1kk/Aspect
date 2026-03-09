@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 
 from apps.accounts.models import User
@@ -13,6 +13,7 @@ from apps.reports.models import Report
 from apps.organizations.models import Organization
 from apps.organizations.serializers import OrganizationSerializer
 from apps.comments.models import Comment
+from apps.chats.models import Chat, Message
 from rest_framework.permissions import IsAdminUser
 
 
@@ -153,6 +154,104 @@ class AdminUsersListView(APIView):
         page = paginator.paginate_queryset(qs, request)
         serializer = UserStatsSerializer(page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
+
+
+class AdminUserActiveView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, user_id):
+        user = User.objects.filter(pk=user_id).first()
+        if not user:
+            return Response({'detail': 'Not found.'}, status=404)
+        is_active = request.data.get('is_active')
+        if is_active is None:
+            return Response({'is_active': ['This field is required.']}, status=400)
+        user.is_active = bool(is_active)
+        user.save(update_fields=['is_active'])
+        return Response({'id': user.id, 'is_active': user.is_active})
+
+
+def _other_participant(chat, target_user):
+    return chat.participant2 if chat.participant1_id == target_user.id else chat.participant1
+
+
+def _serialize_user_for_chat(u, request=None):
+    avatar = None
+    if u.avatar and request:
+        avatar = request.build_absolute_uri(u.avatar.url)
+    elif u.avatar:
+        avatar = u.avatar.url
+    return {
+        'id': u.id,
+        'nickname': u.nickname or u.username or str(u.id),
+        'avatar': avatar,
+    }
+
+
+class AdminUserChatsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, user_id):
+        user = User.objects.filter(pk=user_id).first()
+        if not user:
+            return Response({'detail': 'Not found.'}, status=404)
+        chats = (
+            Chat.objects
+            .filter(Q(participant1=user) | Q(participant2=user))
+            .select_related('participant1', 'participant2')
+            .order_by('-updated_at')
+        )
+        result = []
+        for chat in chats:
+            other = _other_participant(chat, user)
+            last_msg = chat.messages.order_by('-created_at').first()
+            last_message = None
+            if last_msg:
+                last_message = {
+                    'id': last_msg.id,
+                    'text': last_msg.text,
+                    'sender_nickname': last_msg.sender.nickname or last_msg.sender.username,
+                    'created_at': last_msg.created_at.isoformat(),
+                }
+            result.append({
+                'id': chat.id,
+                'other_participant': _serialize_user_for_chat(other, request),
+                'last_message': last_message,
+                'created_at': chat.created_at.isoformat(),
+                'updated_at': chat.updated_at.isoformat(),
+            })
+        return Response(result)
+
+
+class AdminUserChatMessagesView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, user_id, chat_id):
+        user = User.objects.filter(pk=user_id).first()
+        if not user:
+            return Response({'detail': 'User not found.'}, status=404)
+        chat = Chat.objects.filter(
+            Q(participant1=user) | Q(participant2=user),
+            pk=chat_id,
+        ).first()
+        if not chat:
+            return Response({'detail': 'Chat not found.'}, status=404)
+        messages = (
+            chat.messages
+            .select_related('sender')
+            .order_by('created_at')
+        )
+        result = []
+        for msg in messages:
+            result.append({
+                'id': msg.id,
+                'sender_id': msg.sender_id,
+                'sender_nickname': msg.sender.nickname or msg.sender.username,
+                'text': msg.text,
+                'created_at': msg.created_at.isoformat(),
+                'read_at': msg.read_at.isoformat() if msg.read_at else None,
+            })
+        return Response(result)
 
 
 class AdminOrganizationsListView(APIView):

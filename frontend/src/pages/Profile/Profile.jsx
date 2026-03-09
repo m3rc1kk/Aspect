@@ -20,6 +20,7 @@ import { usersApi } from "../../api/usersApi.js";
 import { postsApi } from "../../api/postsApi.js";
 import { subscriptionsApi } from "../../api/subscriptionsApi.js";
 import { organizationsApi } from "../../api/organizationsApi.js";
+import { chatsApi } from "../../api/chatsApi.js";
 import ReportModal from "../../components/ReportModal/ReportModal.jsx";
 import AwardIcon from "../../components/AwardIcon/AwardIcon.jsx";
 import { getAvatarUrl } from "../../utils/avatar.js";
@@ -355,9 +356,20 @@ export default function Profile() {
                                 >
                                     {isFollowing ? 'Unsubscribe' : 'Subscribe'}
                                 </button>
-                                <ButtonLink to="/" className="profile__button profile__message">
+                                <button
+                                    type="button"
+                                    className="profile__button profile__message"
+                                    onClick={async () => {
+                                        try {
+                                            const chat = await chatsApi.createChat(user.id);
+                                            navigate('/chats', { state: { openChat: chat } });
+                                        } catch (err) {
+                                            console.error('Error creating chat:', err);
+                                        }
+                                    }}
+                                >
                                     Message
-                                </ButtonLink>
+                                </button>
                             </div>
                         )}
                     </div>
@@ -394,6 +406,7 @@ export default function Profile() {
                                 <PostList
                                     posts={posts}
                                     currentUserId={currentUser?.id}
+                                    isAdmin={currentUser?.is_staff}
                                     onDelete={(postId) => setPosts(prev => prev.filter(p => p.id !== postId))}
                                 />
                             </>

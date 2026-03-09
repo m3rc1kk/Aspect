@@ -90,13 +90,8 @@ class PostCreateSerializer(serializers.ModelSerializer):
         images_data = validated_data.pop('images', [])
         post = Post.objects.create(**validated_data)
         if images_data:
-            created = PostImage.objects.bulk_create([
-                PostImage(post=post, image=img, order=i)
-                for i, img in enumerate(images_data)
-            ])
-            from .tasks import moderate_post_image
-            for img in created:
-                moderate_post_image.delay(img.id)
+            for i, img in enumerate(images_data):
+                PostImage(post=post, image=img, order=i).save()
         return post
 
     def to_representation(self, instance):

@@ -44,6 +44,32 @@ export async function getAdminUsersList(params = {}) {
     return data;
 }
 
+export async function updateAdminUserActive(userId, isActive) {
+    const { data } = await axiosInstance.patch(`admin-panel/users/${userId}/`, { is_active: isActive });
+    return data;
+}
+
+/**
+ * Fetch chats of a user (admin). Returns list of chats with other_participant and last_message.
+ * @param {number} userId
+ * @returns {Promise<Array<{ id, other_participant, last_message, created_at, updated_at }>>}
+ */
+export async function getAdminUserChats(userId) {
+    const { data } = await axiosInstance.get(`admin-panel/users/${userId}/chats/`);
+    return data;
+}
+
+/**
+ * Fetch messages of a specific chat for a user (admin).
+ * @param {number} userId
+ * @param {number} chatId
+ * @returns {Promise<Array>}
+ */
+export async function getAdminUserChatMessages(userId, chatId) {
+    const { data } = await axiosInstance.get(`admin-panel/users/${userId}/chats/${chatId}/messages/`);
+    return data;
+}
+
 /**
  * Fetch paginated organizations list (admin).
  * @param {object} params - { page }

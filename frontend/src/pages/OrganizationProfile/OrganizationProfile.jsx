@@ -366,6 +366,7 @@ export default function OrganizationProfile() {
                         <PostList
                             posts={posts}
                             currentUserId={currentUser?.id}
+                            isAdmin={currentUser?.is_staff}
                             onDelete={(postId) => setPosts(prev => prev.filter(p => p.id !== postId))}
                         />
                     </div>

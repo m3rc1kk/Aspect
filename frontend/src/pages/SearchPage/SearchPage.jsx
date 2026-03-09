@@ -11,15 +11,19 @@ export default function SearchPage() {
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentUserId, setCurrentUserId] = useState(null);
+    const [currentUserIsAdmin, setCurrentUserIsAdmin] = useState(false);
 
     const handleSearch = async (query) => {
         setLoading(true);
         try {
             const [data, me] = await Promise.all([
                 searchApi.search(query),
-                currentUserId ? Promise.resolve({ id: currentUserId }) : usersApi.getCurrentUser(),
+                currentUserId ? Promise.resolve({ id: currentUserId, is_staff: currentUserIsAdmin }) : usersApi.getCurrentUser(),
             ]);
-            if (!currentUserId && me?.id) setCurrentUserId(me.id);
+            if (!currentUserId && me?.id) {
+                setCurrentUserId(me.id);
+                setCurrentUserIsAdmin(!!me?.is_staff);
+            }
             setResults(data);
         } catch (err) {
             console.error('Search error:', err);
@@ -77,6 +81,8 @@ export default function SearchPage() {
                                     <PostList
                                         posts={results.posts}
                                         currentUserId={currentUserId}
+                                        isAdmin={currentUserIsAdmin}
+                                        onDelete={(postId) => setResults(prev => prev ? { ...prev, posts: (prev.posts || []).filter(p => p.id !== postId) } : null)}
                                     />
                                 </div>
                             )}

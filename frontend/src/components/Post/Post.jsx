@@ -147,7 +147,7 @@ function PostImageGrid({ images, onImageClick }) {
     );
 }
 
-export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
+export default function Post({ post, currentUserId, isAdmin, onLikeChange, onDelete }) {
     const [isLiked, setIsLiked] = useState(post?.is_liked ?? false);
     const [likesCount, setLikesCount] = useState(post?.likes_count ?? 0);
     const [isLiking, setIsLiking] = useState(false);
@@ -169,6 +169,7 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
         : (post.author?.nickname || post.author?.username || 'Unknown User');
     const authorId = post.author?.id;
     const isOwn = currentUserId && authorId === currentUserId;
+    const canDelete = isOwn || isAdmin;
     const postDate = formatDate(post.created_at);
     const commentsCountFormatted = formatNumber(commentsCount);
     const authorLink = hasOrg
@@ -242,7 +243,7 @@ export default function Post({ post, currentUserId, onLikeChange, onDelete }) {
                             </div>
                         </Link>
                         <div className="post__header-buttons">
-                            {isOwn && (
+                            {canDelete && (
                                 <button
                                     type="button"
                                     className="post__header-button"

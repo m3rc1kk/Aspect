@@ -50,9 +50,10 @@ LOCAL_APPS = [
     'apps.reports.apps.ReportsConfig',
     'apps.notifications.apps.NotificationsConfig',
     'apps.adminpanel.apps.AdminpanelConfig',
+    'apps.chats.apps.ChatsConfig'
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + ['cachalot']
+INSTALLED_APPS = ['daphne'] + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + ['cachalot']
 
 
 MIDDLEWARE = [
@@ -266,10 +267,6 @@ SPECTACULAR_SETTINGS = {
     'SECURITY': [{'BearerAuth': []}],
 }
 
-GOOGLE_APPLICATION_CREDENTIALS = os.environ.get(
-    'GOOGLE_APPLICATION_CREDENTIALS',
-    os.path.join(BASE_DIR, 'config', 'aspect.json')
-)
 
 CACHALOT_ONLY_CACHABLE_TABLES = {
     'posts_post',
@@ -281,3 +278,14 @@ CACHALOT_ONLY_CACHABLE_TABLES = {
 CACHALOT_TIMEOUT = 600
 
 CACHALOT_CACHE = 'default'
+
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [config('CHANNEL_LAYERS_REDIS')],
+        },
+    },
+}

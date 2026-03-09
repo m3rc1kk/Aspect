@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAdminUsersList } from '../../../api/adminApi';
+import { getAdminUsersList, updateAdminUserActive, getAdminUserChats, getAdminUserChatMessages } from '../../../api/adminApi';
 import { getAvatarUrl } from '../../../utils/avatar';
 import authService from '../../../api/authService';
 import logo from '../../../assets/images/logo.svg';
@@ -15,6 +15,11 @@ export default function AdminUsers() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [pagination, setPagination] = useState({ count: 0, next: null, previous: null });
     const [page, setPage] = useState(1);
+    const [userChats, setUserChats] = useState([]);
+    const [userChatsLoading, setUserChatsLoading] = useState(false);
+    const [selectedChatId, setSelectedChatId] = useState(null);
+    const [chatMessages, setChatMessages] = useState([]);
+    const [chatMessagesLoading, setChatMessagesLoading] = useState(false);
 
     const user = authService.getCurrentUser();
 
@@ -43,6 +48,32 @@ export default function AdminUsers() {
     }, [page, fetchUsers]);
 
     useEffect(() => {
+        if (!selectedUser?.id) {
+            setUserChats([]);
+            setSelectedChatId(null);
+            setChatMessages([]);
+            return;
+        }
+        setSelectedChatId(null);
+        setChatMessages([]);
+        setUserChatsLoading(true);
+        getAdminUserChats(selectedUser.id)
+            .then(setUserChats)
+            .catch(() => setUserChats([]))
+            .finally(() => setUserChatsLoading(false));
+    }, [selectedUser?.id]);
+
+    const loadChatMessages = useCallback((chatId) => {
+        if (!selectedUser?.id) return;
+        setSelectedChatId(chatId);
+        setChatMessagesLoading(true);
+        getAdminUserChatMessages(selectedUser.id, chatId)
+            .then(setChatMessages)
+            .catch(() => setChatMessages([]))
+            .finally(() => setChatMessagesLoading(false));
+    }, [selectedUser?.id]);
+
+    useEffect(() => {
         document.body.classList.add('admin-page');
         const prev = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
@@ -58,6 +89,20 @@ export default function AdminUsers() {
     };
 
     const closeSidebar = () => setSidebarOpen(false);
+
+    const handleToggleActive = async (e, u) => {
+        e.stopPropagation();
+        const nextActive = !u.is_active;
+        try {
+            await updateAdminUserActive(u.id, nextActive);
+            setUsers(prev => prev.map(x => x.id === u.id ? { ...x, is_active: nextActive } : x));
+            if (selectedUser?.id === u.id) {
+                setSelectedUser(prev => ({ ...prev, is_active: nextActive }));
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '—';
@@ -241,7 +286,15 @@ export default function AdminUsers() {
                                                     <td>{u.nickname || '—'}</td>
                                                     <td className="admin-dashboard__table-muted">{formatDate(u.date_joined)}</td>
                                                     <td>{u.is_staff ? 'Yes' : 'No'}</td>
-                                                    <td>{u.is_active ? 'Yes' : 'No'}</td>
+                                                    <td onClick={(e) => e.stopPropagation()}>
+                                                        <button
+                                                            type="button"
+                                                            className={`admin-users__active-btn ${u.is_active ? 'admin-users__active-btn--on' : 'admin-users__active-btn--off'}`}
+                                                            onClick={(e) => handleToggleActive(e, u)}
+                                                        >
+                                                            {u.is_active ? 'Active' : 'Inactive'}
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             ))
                                         )}
@@ -331,7 +384,83 @@ export default function AdminUsers() {
                             </div>
                             <div className="admin-users__modal-section">
                                 <span className="admin-users__modal-label">Active</span>
-                                <div className="admin-users__modal-value">{selectedUser.is_active ? 'Yes' : 'No'}</div>
+                                <div className="admin-users__modal-value">
+                                    <button
+                                        type="button"
+                                        className={`admin-users__active-btn ${selectedUser.is_active ? 'admin-users__active-btn--on' : 'admin-users__active-btn--off'}`}
+                                        onClick={(e) => handleToggleActive(e, selectedUser)}
+                                    >
+                                        {selectedUser.is_active ? 'Active' : 'Inactive'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="admin-users__modal-section admin-users__chats-section">
+                                <span className="admin-users__modal-label">Чаты</span>
+                                {userChatsLoading ? (
+                                    <div className="admin-users__chats-loading">Загрузка…</div>
+                                ) : userChats.length === 0 ? (
+                                    <div className="admin-users__chats-empty">Нет чатов</div>
+                                ) : (
+                                    <div className="admin-users__chats-list">
+                                        {userChats.map((chat) => (
+                                            <div
+                                                key={chat.id}
+                                                className={`admin-users__chat-item ${selectedChatId === chat.id ? 'admin-users__chat-item--active' : ''}`}
+                                                role="button"
+                                                tabIndex={0}
+                                                onClick={() => loadChatMessages(chat.id)}
+                                                onKeyDown={(e) => e.key === 'Enter' && loadChatMessages(chat.id)}
+                                            >
+                                                <div className="admin-users__chat-avatar">
+                                                    {chat.other_participant?.avatar ? (
+                                                        <img src={getAvatarUrl(chat.other_participant.avatar)} alt="" />
+                                                    ) : (
+                                                        (chat.other_participant?.nickname?.[0] || '?').toUpperCase()
+                                                    )}
+                                                </div>
+                                                <div className="admin-users__chat-info">
+                                                    <span className="admin-users__chat-name">{chat.other_participant?.nickname || `#${chat.other_participant?.id}`}</span>
+                                                    {chat.last_message && (
+                                                        <span className="admin-users__chat-preview">{chat.last_message.text?.slice(0, 40)}{(chat.last_message.text?.length || 0) > 40 ? '…' : ''}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {selectedChatId && (
+                                    <div className="admin-users__messages-wrap">
+                                        <div className="admin-users__messages-header">
+                                            <span>Переписка</span>
+                                            <button
+                                                type="button"
+                                                className="admin-users__messages-back"
+                                                onClick={() => { setSelectedChatId(null); setChatMessages([]); }}
+                                            >
+                                                Свернуть
+                                            </button>
+                                        </div>
+                                        {chatMessagesLoading ? (
+                                            <div className="admin-users__chats-loading">Загрузка сообщений…</div>
+                                        ) : (
+                                            <div className="admin-users__messages-list">
+                                                {chatMessages.map((msg) => (
+                                                    <div
+                                                        key={msg.id}
+                                                        className={`admin-users__message ${msg.sender_id === selectedUser.id ? 'admin-users__message--own' : 'admin-users__message--other'}`}
+                                                    >
+                                                        <span className="admin-users__message-sender">{msg.sender_nickname}</span>
+                                                        <p className="admin-users__message-text">{msg.text}</p>
+                                                        <time className="admin-users__message-time">
+                                                            {formatDate(msg.created_at)} {msg.created_at?.slice(11, 16)}
+                                                        </time>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="admin-users__modal-footer">

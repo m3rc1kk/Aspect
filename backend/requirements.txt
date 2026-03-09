@@ -26,3 +26,6 @@ django-prometheus>=2.3.0
 drf-spectacular>=0.27.0
 google-cloud-vision>=3.0.0
 django-cachalot>=2.6
+channels>=4.0
+channels-redis>=4.2
+daphne>=4.0

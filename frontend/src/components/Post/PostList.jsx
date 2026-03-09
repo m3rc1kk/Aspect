@@ -1,6 +1,6 @@
 import Post from "./Post.jsx";
 
-export default function PostList({ posts = [], currentUserId, onDelete, className = '', classNameItem = '' }) {
+export default function PostList({ posts = [], currentUserId, isAdmin, onDelete, className = '', classNameItem = '' }) {
     // Ensure posts is always an array
     const postsArray = Array.isArray(posts) ? posts : [];
 
@@ -16,7 +16,7 @@ export default function PostList({ posts = [], currentUserId, onDelete, classNam
         <ul className={`post__list ${className}`}>
             {postsArray.map((post) => (
                 <li key={post.id} className={`post__item ${classNameItem}`}>
-                    <Post post={post} currentUserId={currentUserId} onDelete={onDelete} />
+                    <Post post={post} currentUserId={currentUserId} isAdmin={isAdmin} onDelete={onDelete} />
                 </li>
             ))}
         </ul>

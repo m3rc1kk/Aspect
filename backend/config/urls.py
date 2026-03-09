@@ -20,6 +20,7 @@ urlpatterns = [
     path('api/v1/', include('apps.reports.urls')),
     path('api/v1/', include('apps.notifications.urls')),
     path('api/v1/', include('apps.adminpanel.urls')),
+    path('api/v1/', include('apps.chats.urls')),
     path('', include('django_prometheus.urls')),
 ]
 

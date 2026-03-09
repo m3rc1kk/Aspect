@@ -22,17 +22,15 @@ from ..subscriptions.models import OrganizationSubscription
 
 SEARCH_CACHE_TIMEOUT = 120
 
-# Только одобренные модерацией картинки отдаём в API
-APPROVED_IMAGES_PREFETCH = Prefetch(
+
+IMAGES_PREFETCH = Prefetch(
     'images',
-    queryset=PostImage.objects.filter(
-        moderation_status=PostImage.ModerationStatus.APPROVED
-    ).order_by('order'),
+    queryset=PostImage.objects.order_by('order'),
 )
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(APPROVED_IMAGES_PREFETCH)
+    queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(IMAGES_PREFETCH)
     serializer_class = PostSerializer
     permission_classes = [IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -41,7 +39,7 @@ class PostViewSet(viewsets.ModelViewSet):
     pagination_class = FeedCursorPagination
 
     def get_queryset(self):
-        queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(APPROVED_IMAGES_PREFETCH)
+        queryset = Post.objects.all().select_related('author', 'organization').prefetch_related(IMAGES_PREFETCH)
 
         author_id = self.request.query_params.get('author', None)
         if author_id is not None:
@@ -95,7 +93,7 @@ class FeedView(generics.ListAPIView):
 
         return (
             Post.objects.select_related('author', 'organization')
-            .prefetch_related(APPROVED_IMAGES_PREFETCH)
+            .prefetch_related(IMAGES_PREFETCH)
             .annotate(
                 likes_count_annotated=Count('likes'),
                 is_subscription=Case(
@@ -138,7 +136,7 @@ class SearchView(generics.GenericAPIView):
 
         posts = Post.objects.filter(
             content__icontains=q
-        ).select_related('author', 'organization').prefetch_related(APPROVED_IMAGES_PREFETCH)[:20]
+        ).select_related('author', 'organization').prefetch_related(IMAGES_PREFETCH)[:20]
 
         organizations = Organization.objects.filter(
             Q(username__icontains=q) | Q(nickname__icontains=q))[:20]

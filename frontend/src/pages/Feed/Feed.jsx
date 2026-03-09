@@ -159,7 +159,7 @@ export default function Feed() {
                         <p className="feed__loading">Loading feed…</p>
                     ) : (
                         <>
-                            <PostList posts={posts} currentUserId={currentUser?.id} onDelete={handlePostDelete} />
+                            <PostList posts={posts} currentUserId={currentUser?.id} isAdmin={currentUser?.is_staff} onDelete={handlePostDelete} />
                             {nextPage && (
                                 <div ref={loadMoreRef} className="feed__load-more-sentinel" aria-hidden="true" />
                             )}
