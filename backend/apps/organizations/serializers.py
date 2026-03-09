@@ -28,10 +28,22 @@ class OrganizationSerializer(serializers.ModelSerializer):
         return False
 
 
+MAX_ORGANIZATIONS_PER_USER = 10
+
+
 class OrganizationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = ['id', 'username', 'nickname', 'avatar']
+
+    def validate(self, attrs):
+        if self.instance is None:
+            user = self.context['request'].user
+            if user.organizations.count() >= MAX_ORGANIZATIONS_PER_USER:
+                raise serializers.ValidationError(
+                    {'detail': f'Достигнут лимит: не более {MAX_ORGANIZATIONS_PER_USER} организаций на пользователя.'}
+                )
+        return attrs
 
     def validate_username(self, value):
         if len(value) > 30:

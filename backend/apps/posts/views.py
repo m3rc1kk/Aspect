@@ -12,14 +12,12 @@ from ..accounts.models import User
 from ..accounts.serializers import UserSerializer
 from ..organizations.models import Organization
 from ..organizations.serializers import OrganizationSerializer
-from config.pagination import FeedCursorPagination
+from config.pagination import FeedCursorPagination, FeedListCursorPagination
 from config.throttles import PostRateThrottle
 
-from django.db.models import Q, Count, Case, When, Value, IntegerField
+from django.db.models import Q, Count, Case, When, Value, IntegerField, F
 from django.utils import timezone
 from datetime import timedelta
-from ..subscriptions.models import Subscription
-from ..subscriptions.models import OrganizationSubscription
 
 SEARCH_CACHE_TIMEOUT = 120
 
@@ -79,42 +77,35 @@ class PostViewSet(viewsets.ModelViewSet):
 class FeedView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
+    pagination_class = FeedListCursorPagination
 
     def get_queryset(self):
-        user = self.request.user
-        followed_user_ids = list(
-            Subscription.objects.filter(follower=user).values_list('following_id', flat=True)
+        # Топ-5 по лайкам за последние 24 часа
+        day_ago = timezone.now() - timedelta(hours=24)
+        top5_ids = list(
+            Post.objects.filter(created_at__gte=day_ago)
+            .annotate(lc=Count('likes'))
+            .order_by('-lc', '-created_at', '-id')[:5]
+            .values_list('id', flat=True)
         )
-        followed_org_ids = list(
-            OrganizationSubscription.objects.filter(follower=user).values_list('following_id', flat=True)
-        )
-
-        subscription_q = Q(author=user)
-        if followed_user_ids:
-            subscription_q |= Q(author_id__in=followed_user_ids)
-        if followed_org_ids:
-            subscription_q |= Q(organization_id__in=followed_org_ids)
-
-        popular_cutoff = timezone.now() - timedelta(days=30)
 
         return (
             Post.objects.select_related('author', 'organization')
             .prefetch_related(IMAGES_PREFETCH)
             .annotate(
-                likes_count_annotated=Count('likes'),
-                is_subscription=Case(
-                    When(subscription_q, then=Value(1)),
+                likes_count=Count('likes'),
+                is_today_top5=Case(
+                    When(pk__in=top5_ids, then=Value(1)),
                     default=Value(0),
                     output_field=IntegerField(),
                 ),
-            ).filter(
-                subscription_q
-                | (
-                    Q(created_at__gte=popular_cutoff)
-                    & Q(likes__isnull=False) 
-                )
+                sort_key=Case(
+                    When(pk__in=top5_ids, then=F('likes_count')),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                ),
             )
-            .order_by('-is_subscription', '-likes_count_annotated', '-created_at')
+            .order_by('-is_today_top5', '-sort_key', '-created_at', '-id')
         )
 
 
