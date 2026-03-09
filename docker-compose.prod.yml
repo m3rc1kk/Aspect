@@ -16,20 +16,6 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    env_file:
-      - backend/.env
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -75,7 +61,6 @@ services:
       DJANGO_ENV: prod
     depends_on:
       - backend
-      - rabbitmq
       - redis
     restart: unless-stopped
 
@@ -89,7 +74,6 @@ services:
       DJANGO_ENV: prod
     depends_on:
       - backend
-      - rabbitmq
       - redis
     restart: unless-stopped
 
@@ -104,8 +88,6 @@ services:
     ports:
       - "5555:5555"
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       redis:
         condition: service_started
       celery:

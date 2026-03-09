@@ -14,6 +14,7 @@ def send_password_reset_email(email, subject, message):
         fail_silently=False,
     )
 
+
 @shared_task
 def send_verification_code_email(email, code):
     subject = 'Aspect - Verification Code'

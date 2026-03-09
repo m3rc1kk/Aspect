@@ -156,7 +156,7 @@ AUTH_USER_MODEL = 'accounts.User'
 FRONTEND_URL = config('FRONTEND_URL', default='https://aspectfy.ru')
 CORS_ALLOW_CREDENTIALS = True
 
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@localhost:5672//')
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -168,7 +168,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
-
+EMAIL_TIMEOUT = config('EMAIL_TIMEOUT', default=15, cast=int)
 SIGNUP_CODE_REDIS_PREFIX = 'signup_code:'
 SIGNUP_CODE_TTL_SECONDS = 900
 LIKE_CODE_REDIS_PREFIX = 'likes:post:'
