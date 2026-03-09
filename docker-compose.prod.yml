@@ -18,6 +18,11 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    env_file:
+      - backend/.env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 10s
