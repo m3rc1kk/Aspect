@@ -2,16 +2,21 @@ import axiosInstance from './axiosConfig';
 
 export const postsApi = {
     /**
-     * Персональная лента: подписки + популярные посты (page-based).
-     * @param {number} page - номер страницы (1-based)
+     * Персональная лента: подписки + популярные посты (cursor-based).
+     * @param {string|null} cursor - курсор для следующей страницы (null = первая страница)
      * @param {number} pageSize - размер страницы
-     * @returns {{ results: array, next: string|null, previous: string|null, count: number }}
+     * @returns {{ results: array, next: string|null, previous: string|null }}
      */
-    getFeed: async (page = 1, pageSize = 20) => {
+    getFeed: async (cursor = null, pageSize = 20) => {
         try {
-            const response = await axiosInstance.get('/feed/', {
-                params: { page, page_size: pageSize },
-            });
+            const params = { page_size: pageSize };
+            if (cursor) {
+                const value = typeof cursor === 'string' && cursor.startsWith('http')
+                    ? new URL(cursor).searchParams.get('cursor')
+                    : cursor;
+                if (value) params.cursor = value;
+            }
+            const response = await axiosInstance.get('/feed/', { params });
             return response.data;
         } catch (error) {
             console.error('Error fetching feed:', error.response?.data || error.message);

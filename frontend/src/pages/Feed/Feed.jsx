@@ -42,10 +42,10 @@ export default function Feed() {
     const fetchPosts = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await postsApi.getFeed(1);
+            const data = await postsApi.getFeed();
             const list = data?.results ?? [];
             setPosts(list);
-            setNextPage(data?.next ? 2 : null);
+            setNextPage(data?.next ?? null);
         } catch (err) {
             console.error('Error fetching feed:', err);
             setPosts([]);
@@ -62,7 +62,7 @@ export default function Feed() {
             const data = await postsApi.getFeed(nextPage);
             const list = data?.results ?? [];
             setPosts(prev => [...prev, ...list]);
-            setNextPage(data?.next ? nextPage + 1 : null);
+            setNextPage(data?.next ?? null);
         } catch (err) {
             console.error('Error loading more posts:', err);
         } finally {
@@ -86,7 +86,7 @@ export default function Feed() {
     const handlePostSubmit = async (content, images = []) => {
         try {
             const newPost = await postsApi.createPost({ content, images });
-            setPosts([newPost, ...posts]);
+            setPosts(prev => [newPost, ...prev]);
         } catch (err) {
             console.error('Error creating post:', err);
             alert('Failed to create post. Please try again.');
