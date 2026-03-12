@@ -116,7 +116,7 @@ export default function Chats() {
                     if (prev.some((m) => m.id === msg.id)) return prev;
                     return [...prev, msg];
                 });
-            } catch { /* ignore parse error */ }
+            } catch {}
         };
 
         ws.onclose = () => {
@@ -175,7 +175,6 @@ export default function Chats() {
 
     const otherParticipant = activeChat?.other_participant;
 
-    // На мобильном в открытом чате скрываем нижний navbar, чтобы было видно поле ввода
     const hideHeader = isMobile && !!activeChat;
 
     return (

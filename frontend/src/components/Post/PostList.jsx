@@ -1,7 +1,6 @@
 import Post from "./Post.jsx";
 
 export default function PostList({ posts = [], currentUserId, isAdmin, onDelete, className = '', classNameItem = '' }) {
-    // Ensure posts is always an array
     const postsArray = Array.isArray(posts) ? posts : [];
 
     if (postsArray.length === 0) {

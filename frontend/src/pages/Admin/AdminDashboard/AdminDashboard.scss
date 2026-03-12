@@ -33,7 +33,7 @@ $admin-purple: #8B5CF6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
-  padding-bottom: 0 !important; // Override legacy styles (bottom nav space)
+  padding-bottom: 0 !important;
 
   &--error {
     padding: 2rem;
@@ -88,7 +88,6 @@ $admin-purple: #8B5CF6;
     flex-shrink: 0;
   }
 
-  // Legacy: hide any bottom nav that might be rendered inside admin (nav is in sidebar)
   .admin-layout__bottom-nav {
     display: none !important;
   }
@@ -581,7 +580,6 @@ $admin-purple: #8B5CF6;
   }
 }
 
-// When admin is open: hide main app header / bottom nav so they don't show on mobile
 body.admin-page {
   .header,
   [class*="bottom-nav"],
@@ -593,7 +591,7 @@ body.admin-page {
   overflow: hidden;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: $admin-surface-2 !important; // Match admin bg so no white bar shows
+  background-color: $admin-surface-2 !important;
 }
 
 html:has(body.admin-page) {

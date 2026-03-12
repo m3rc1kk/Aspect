@@ -1,7 +1,6 @@
 @use "../../../styles/variables" as *;
 @use "../../../styles/mixins" as *;
 
-// Reuse dashboard layout and table styles
 @use "../AdminDashboard/AdminDashboard.scss";
 
 .admin-reports__toolbar {
@@ -101,7 +100,6 @@
   }
 }
 
-// Modal
 .admin-reports__modal-overlay {
   position: fixed;
   inset: 0;

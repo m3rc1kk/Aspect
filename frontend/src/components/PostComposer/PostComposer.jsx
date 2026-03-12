@@ -9,7 +9,6 @@ const COMPRESS_QUALITY = 0.8;
 
 function compressImage(file) {
     return new Promise((resolve) => {
-        // Skip non-image or small files (< 500KB)
         if (!file.type.startsWith('image/') || file.size < 512000) {
             resolve(file);
             return;
@@ -23,9 +22,7 @@ function compressImage(file) {
 
             let { width, height } = img;
 
-            // Only resize if larger than max dimension
             if (width <= MAX_DIMENSION && height <= MAX_DIMENSION) {
-                // Still compress quality if file is large (> 2MB)
                 if (file.size < 2 * 1024 * 1024) {
                     resolve(file);
                     return;
@@ -73,8 +70,8 @@ function compressImage(file) {
 
 export default function PostComposer({ placeholder = "How's life?)", onSubmit }) {
     const [text, setText] = useState("");
-    const [images, setImages] = useState([]);       // compressed files for upload
-    const [previews, setPreviews] = useState([]);    // blob URLs for display
+    const [images, setImages] = useState([]);
+    const [previews, setPreviews] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef(null);
 
@@ -118,7 +115,7 @@ export default function PostComposer({ placeholder = "How's life?)", onSubmit })
         const files = Array.from(e.target.files || []);
         if (files.length === 0) return;
 
-        const rasterOnly = files.filter(f => ALLOWED_TYPES.includes(f.type));
+        const rasterOnly = files.filter((f) => ALLOWED_TYPES.includes(f.type));
         if (rasterOnly.length === 0) return;
 
         const slotsLeft = MAX_IMAGES - images.length;
@@ -132,7 +129,6 @@ export default function PostComposer({ placeholder = "How's life?)", onSubmit })
             setPreviews(prev => [...prev, ...newPreviews]);
         }
 
-        // Reset input so the same file can be selected again
         e.target.value = '';
     };
 

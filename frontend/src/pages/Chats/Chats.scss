@@ -1,6 +1,4 @@
 .chats {
-
-  // Синий акцентный блок справа загораживает кнопки отправки — скрываем на странице чатов
   &.block .block__inner::after {
     display: none;
   }
@@ -57,16 +55,12 @@
     overflow-x: hidden;
 
 
-    /* Hide scrollbar for Chrome, Safari and Opera */
     &::-webkit-scrollbar {
       display: none;
     }
 
-    /* Hide scrollbar for IE, Edge and Firefox */
     -ms-overflow-style: none;
-    /* IE and Edge */
     scrollbar-width: none;
-    /* Firefox */
 
     &-avatar {
       border-radius: 50%;
@@ -202,7 +196,6 @@
       height: 100%;
       font-size: 14px;
 
-      // Не меньше 16px на мобильном — иначе iOS приближает экран при фокусе на поле
       @include mobile {
         font-size: 16px;
       }
@@ -240,7 +233,7 @@
       width: 50px;
       height: 50px;
       display: block;
-      box-shadow: none; // убираем синее свечение при hover/active
+      box-shadow: none;
 
       @include mobile {
         width: 60px;

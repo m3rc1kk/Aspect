@@ -79,7 +79,6 @@ export default function SignUp() {
         e.preventDefault();
         setError("");
 
-        // Client-side validation
         if (password !== confirmPassword) {
             setError("Passwords do not match");
             return;
@@ -103,7 +102,6 @@ export default function SignUp() {
             });
             navigate('/sign-up/code', { state: { email: response.email } });
         } catch (err) {
-            console.error('Sign up error:', err);
             if (err.email) {
                 setError(err.email[0]);
             } else if (err.username) {

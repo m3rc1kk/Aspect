@@ -161,7 +161,6 @@
     overflow: hidden;
     margin-bottom: 12px;
 
-    // 1 image — full width
     &--count-1 {
       grid-template-columns: 1fr;
 
@@ -175,7 +174,6 @@
       }
     }
 
-    // 2 images — side by side
     &--count-2 {
       grid-template-columns: 1fr 1fr;
 
@@ -184,7 +182,6 @@
       }
     }
 
-    // 3 images — big left, two stacked right
     &--count-3 {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
@@ -194,13 +191,11 @@
       }
     }
 
-    // 4 images — 2×2 grid
     &--count-4 {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
     }
 
-    // 5+ images — 2×2 with "+N" overlay on last
     &--count-5 {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
@@ -374,7 +369,6 @@
   }
 }
 
-// Lightbox overlay
 .lightbox {
   position: fixed;
   inset: 0;

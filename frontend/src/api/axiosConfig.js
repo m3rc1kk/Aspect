@@ -66,7 +66,6 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-/** Base URL of the backend (no /api/v1). Use for media URLs (avatars, etc.). */
 export const getMediaUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;

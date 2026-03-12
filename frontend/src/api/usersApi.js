@@ -11,7 +11,6 @@ export const usersApi = {
         }
     },
 
-    /** Топ-10 пользователей по подписчикам (для ленты). */
     getPopular: async () => {
         try {
             const response = await axiosInstance.get('/users/', { params: { popular: 1 } });

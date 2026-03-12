@@ -1,12 +1,6 @@
 import axiosInstance from './axiosConfig';
 
 export const postsApi = {
-    /**
-     * Персональная лента: подписки + популярные посты (cursor-based).
-     * @param {string|null} cursor - курсор для следующей страницы (null = первая страница)
-     * @param {number} pageSize - размер страницы
-     * @returns {{ results: array, next: string|null, previous: string|null }}
-     */
     getFeed: async (cursor = null, pageSize = 20) => {
         try {
             const params = { page_size: pageSize };
@@ -24,12 +18,6 @@ export const postsApi = {
         }
     },
 
-    /**
-     * Лента постов с курсорной пагинацией.
-     * @param {string|null} cursor - курсор для следующей страницы (null = первая страница)
-     * @param {object} params - фильтры: author, organization, page_size
-     * @returns {{ results: array, next: string|null, previous: string|null }}
-     */
     getPosts: async (cursor = null, params = {}) => {
         try {
             const query = { ...params };
