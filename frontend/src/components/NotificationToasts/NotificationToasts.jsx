@@ -43,7 +43,7 @@ function useNotificationsPolling(enabled) {
                 const data = await notificationsApi.getList({ limit: 10 });
                 const list = Array.isArray(data) ? data : (data?.results ?? []);
                 processNotifications(list);
-            } catch {
+            } catch (err) {
                 console.error('Error fetching notifications:', err);
             }
         };
