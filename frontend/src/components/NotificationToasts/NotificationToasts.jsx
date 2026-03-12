@@ -44,6 +44,7 @@ function useNotificationsPolling(enabled) {
                 const list = Array.isArray(data) ? data : (data?.results ?? []);
                 processNotifications(list);
             } catch {
+                console.error('Error fetching notifications:', err);
             }
         };
 

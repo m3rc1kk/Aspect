@@ -116,7 +116,9 @@ export default function Chats() {
                     if (prev.some((m) => m.id === msg.id)) return prev;
                     return [...prev, msg];
                 });
-            } catch {}
+            } catch {
+                console.error('Error parsing message:', event.data);
+            }
         };
 
         ws.onclose = () => {
